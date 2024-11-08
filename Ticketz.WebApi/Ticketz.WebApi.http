@@ -1,0 +1,6 @@
+@Ticketz.WebApi_HostAddress = http://localhost:5178
+
+GET {{Ticketz.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
