@@ -25,8 +25,8 @@ public class AirportConfiguration : IEntityTypeConfiguration<Airport>
 
         builder.HasIndex(indexExpression: a => a.Name, name: "UK_Airport_Name").IsUnique();
 
-        builder.HasMany(a => a.DepartureOrders);
-        builder.HasMany(a => a.ArrivalOrders);
+        builder.HasMany(a=> a.DepartingFlights);
+        builder.HasMany(a => a.ArrivingFlights);
 
         builder.HasQueryFilter(a => !a.DeletedDate.HasValue);
     }

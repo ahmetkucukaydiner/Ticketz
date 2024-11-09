@@ -14,6 +14,7 @@ public class Airline : Entity<int>
     public Uri LogoURL { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; }
+    public virtual ICollection<Flight> Flights { get; set; }
 
     public Airline()
     {

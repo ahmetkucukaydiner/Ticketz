@@ -166,7 +166,7 @@ namespace Ticketz.Persistence.Migrations
                     b.ToTable("Customers", (string)null);
                 });
 
-            modelBuilder.Entity("Ticketz.Domain.Entities.Order", b =>
+            modelBuilder.Entity("Ticketz.Domain.Entities.Flight", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -182,6 +182,62 @@ namespace Ticketz.Persistence.Migrations
                     b.Property<int>("ArrivalAirportId")
                         .HasColumnType("int")
                         .HasColumnName("ArrivalAirportId");
+
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("ArrivalTime");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<int>("DepartureAirportId")
+                        .HasColumnType("int")
+                        .HasColumnName("DepartureAirportId");
+
+                    b.Property<DateTime>("DepartureTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DepartureTime");
+
+                    b.Property<string>("FlightNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("Price");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AirlineId");
+
+                    b.HasIndex("ArrivalAirportId");
+
+                    b.HasIndex("DepartureAirportId");
+
+                    b.ToTable("Flights", (string)null);
+                });
+
+            modelBuilder.Entity("Ticketz.Domain.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AirlineId")
+                        .HasColumnType("int")
+                        .HasColumnName("AirlineId");
 
                     b.Property<DateTime>("ArrivalDate")
                         .HasColumnType("datetime2")
@@ -199,13 +255,13 @@ namespace Ticketz.Persistence.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<int>("DepartureAirportId")
-                        .HasColumnType("int")
-                        .HasColumnName("DepartureAirportId");
-
                     b.Property<DateTime>("DepartureDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("DepartureDate");
+
+                    b.Property<int>("FlightId")
+                        .HasColumnType("int")
+                        .HasColumnName("FlightId");
 
                     b.Property<int>("OrderState")
                         .HasColumnType("int")
@@ -227,11 +283,9 @@ namespace Ticketz.Persistence.Migrations
 
                     b.HasIndex("AirlineId");
 
-                    b.HasIndex("ArrivalAirportId");
-
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("DepartureAirportId");
+                    b.HasIndex("FlightId");
 
                     b.HasIndex("UserId");
 
@@ -288,6 +342,33 @@ namespace Ticketz.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Ticketz.Domain.Entities.Flight", b =>
+                {
+                    b.HasOne("Ticketz.Domain.Entities.Airline", "Airline")
+                        .WithMany("Flights")
+                        .HasForeignKey("AirlineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ticketz.Domain.Entities.Airport", "ArrivalAirport")
+                        .WithMany("ArrivingFlights")
+                        .HasForeignKey("ArrivalAirportId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Ticketz.Domain.Entities.Airport", "DepartureAirport")
+                        .WithMany("DepartingFlights")
+                        .HasForeignKey("DepartureAirportId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Airline");
+
+                    b.Navigation("ArrivalAirport");
+
+                    b.Navigation("DepartureAirport");
+                });
+
             modelBuilder.Entity("Ticketz.Domain.Entities.Order", b =>
                 {
                     b.HasOne("Ticketz.Domain.Entities.Airline", "Airline")
@@ -296,22 +377,16 @@ namespace Ticketz.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ticketz.Domain.Entities.Airport", "ArrivalAirport")
-                        .WithMany("ArrivalOrders")
-                        .HasForeignKey("ArrivalAirportId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Ticketz.Domain.Entities.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ticketz.Domain.Entities.Airport", "DepartureAirport")
-                        .WithMany("DepartureOrders")
-                        .HasForeignKey("DepartureAirportId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("Ticketz.Domain.Entities.Flight", "Flight")
+                        .WithMany("Orders")
+                        .HasForeignKey("FlightId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Ticketz.Domain.Entities.User", "User")
@@ -322,28 +397,33 @@ namespace Ticketz.Persistence.Migrations
 
                     b.Navigation("Airline");
 
-                    b.Navigation("ArrivalAirport");
-
                     b.Navigation("Customer");
 
-                    b.Navigation("DepartureAirport");
+                    b.Navigation("Flight");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("Ticketz.Domain.Entities.Airline", b =>
                 {
+                    b.Navigation("Flights");
+
                     b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Ticketz.Domain.Entities.Airport", b =>
                 {
-                    b.Navigation("ArrivalOrders");
+                    b.Navigation("ArrivingFlights");
 
-                    b.Navigation("DepartureOrders");
+                    b.Navigation("DepartingFlights");
                 });
 
             modelBuilder.Entity("Ticketz.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Ticketz.Domain.Entities.Flight", b =>
                 {
                     b.Navigation("Orders");
                 });

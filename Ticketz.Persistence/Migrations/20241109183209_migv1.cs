@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ticketz.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class firstmig : Migration
+    public partial class migv1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,6 +67,44 @@ namespace Ticketz.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Flights",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FlightNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepartureAirportId = table.Column<int>(type: "int", nullable: false),
+                    ArrivalAirportId = table.Column<int>(type: "int", nullable: false),
+                    DepartureTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AirlineId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Flights", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Flights_Airlines_AirlineId",
+                        column: x => x.AirlineId,
+                        principalTable: "Airlines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Flights_Airports_ArrivalAirportId",
+                        column: x => x.ArrivalAirportId,
+                        principalTable: "Airports",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Flights_Airports_DepartureAirportId",
+                        column: x => x.DepartureAirportId,
+                        principalTable: "Airports",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
                 {
@@ -101,9 +139,8 @@ namespace Ticketz.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     AirlineId = table.Column<int>(type: "int", nullable: false),
-                    DepartureAirportId = table.Column<int>(type: "int", nullable: false),
-                    ArrivalAirportId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    FlightId = table.Column<int>(type: "int", nullable: false),
                     DepartureDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ArrivalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -122,21 +159,17 @@ namespace Ticketz.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_Airports_ArrivalAirportId",
-                        column: x => x.ArrivalAirportId,
-                        principalTable: "Airports",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Orders_Airports_DepartureAirportId",
-                        column: x => x.DepartureAirportId,
-                        principalTable: "Airports",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Orders_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Flights_FlightId",
+                        column: x => x.FlightId,
+                        principalTable: "Flights",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Orders_Users_UserId",
                         column: x => x.UserId,
@@ -163,14 +196,24 @@ namespace Ticketz.Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_AirlineId",
-                table: "Orders",
+                name: "IX_Flights_AirlineId",
+                table: "Flights",
                 column: "AirlineId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_ArrivalAirportId",
-                table: "Orders",
+                name: "IX_Flights_ArrivalAirportId",
+                table: "Flights",
                 column: "ArrivalAirportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Flights_DepartureAirportId",
+                table: "Flights",
+                column: "DepartureAirportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_AirlineId",
+                table: "Orders",
+                column: "AirlineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
@@ -178,9 +221,9 @@ namespace Ticketz.Persistence.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_DepartureAirportId",
+                name: "IX_Orders_FlightId",
                 table: "Orders",
-                column: "DepartureAirportId");
+                column: "FlightId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
@@ -195,16 +238,19 @@ namespace Ticketz.Persistence.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
+                name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Flights");
+
+            migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "Airlines");
 
             migrationBuilder.DropTable(
                 name: "Airports");
-
-            migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

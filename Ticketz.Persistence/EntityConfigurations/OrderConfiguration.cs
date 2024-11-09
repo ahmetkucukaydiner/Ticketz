@@ -18,8 +18,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.Id).HasColumnName("Id").IsRequired();
         builder.Property(o => o.AirlineId).HasColumnName("AirlineId").IsRequired();
         builder.Property(o => o.CustomerId).HasColumnName("CustomerId").IsRequired();
-        builder.Property(o => o.DepartureAirportId).HasColumnName("DepartureAirportId").IsRequired();
-        builder.Property(o => o.ArrivalAirportId).HasColumnName("ArrivalAirportId").IsRequired();
+        builder.Property(o => o.FlightId).HasColumnName("FlightId").IsRequired();
         builder.Property(o => o.DepartureDate).HasColumnName("DepartureDate").IsRequired();
         builder.Property(o => o.ArrivalDate).HasColumnName("ArrivalDate").IsRequired();
         builder.Property(o => o.UserId).HasColumnName("UserId");
@@ -30,8 +29,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.DeletedDate).HasColumnName("DeletedDate");
         builder.Property(o => o.UpdatedDate).HasColumnName("UpdatedDate");
 
-        builder.HasOne(o => o.ArrivalAirport).WithMany(a => a.ArrivalOrders).HasForeignKey(o => o.ArrivalAirportId).OnDelete(DeleteBehavior.NoAction);
-        builder.HasOne(o => o.DepartureAirport).WithMany(a => a.DepartureOrders).HasForeignKey(o => o.DepartureAirportId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(o => o.Flight);        
         builder.HasOne(o => o.Airline);
         builder.HasOne(o => o.User);
         builder.HasOne(o => o.Customer);

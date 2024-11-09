@@ -8,13 +8,14 @@ public class Airport : Entity<int>
     public string Country { get; set; }
     public string AirportCode { get; set; }
 
-    public virtual ICollection<Order> DepartureOrders { get; set; }
-    public virtual ICollection<Order> ArrivalOrders { get; set; }
+    public virtual ICollection<Flight> DepartingFlights { get; set; }
+    public virtual ICollection<Flight> ArrivingFlights { get; set; }
+
 
     public Airport()
     {
-        DepartureOrders = new HashSet<Order>();
-        ArrivalOrders = new HashSet<Order>();
+        DepartingFlights = new HashSet<Flight>();
+        ArrivingFlights = new HashSet<Flight>();
     }
 
     public Airport(string name, string country, string airportCode) : this()
