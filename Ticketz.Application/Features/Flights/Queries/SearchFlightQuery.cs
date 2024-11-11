@@ -19,7 +19,7 @@ public class SearchFlightQuery : IRequest<List<SearchFlightResponse>>, ICachable
 
     public string CacheKey => "SearchFlightQuery";
     public bool BypassCache { get; }
-    public string? CacheGroupKey => throw new NotImplementedException();
+    public string? CacheGroupKey => "SearchFlight";
     public TimeSpan? SlidingExpiration { get; }
 
     public class SearchFlightQueryHandler : IRequestHandler<SearchFlightQuery, List<SearchFlightResponse>>

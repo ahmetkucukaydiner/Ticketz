@@ -14,7 +14,6 @@ namespace Ticketz.WebApi.Controllers;
 [ApiController]
 public class AirportsController : BaseController
 {
-
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] CreateAirportCommand createAirportCommand)
     {

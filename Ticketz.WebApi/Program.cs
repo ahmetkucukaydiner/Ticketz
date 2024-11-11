@@ -1,6 +1,7 @@
 using Core.CrossCuttingConcerns.Exceptions.Extensions;
 using Core.Security;
 using Ticketz.Application;
+using Ticketz.Infrastructure;
 using Ticketz.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddInfrastructureServices();
 //builder.Services.AddSecurityServices();
 
 //builder.Services.AddDistributedMemoryCache();
