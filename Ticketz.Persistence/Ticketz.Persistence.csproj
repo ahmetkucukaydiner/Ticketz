@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ticketz.Application\Ticketz.Application.csproj" />
     <ProjectReference Include="..\Ticketz.Domain\Ticketz.Domain.csproj" />
+    <ProjectReference Include="..\Ticketz.Infrastructure\Ticketz.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -26,6 +26,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IAirlineRepository, AirlineRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IFlightRepository, FlightRepository>();
 
         return services;
     }

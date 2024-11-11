@@ -14,6 +14,6 @@ public class FlightSearchCriteriaDto
     public DateTime? ReturnDate { get; set; }
     public int AdultPassengers { get; set; } = 1;
     public string Sort { get; set; }
-    public string CabinClass { get; set; } = "ECONOMY";
-    public string Currency { get; set; } = "TRY";
+    public string? CabinClass { get; set; } = "ECONOMY";
+    public string? Currency { get; set; } = "TRY";
 }
