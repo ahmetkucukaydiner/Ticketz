@@ -10,11 +10,8 @@ namespace Ticketz.Domain.Entities;
 public class Flight : Entity<int>
 {
     public int AirlineId { get; set; }
-    public string AirlineName{ get; set; }
     public int DepartureAirportId { get; set; }
-    public string DepartureAirportName { get; set; }
     public int ArrivalAirportId { get; set; }
-    public string ArrivalAirportName { get; set; }
     public int FlightNumber { get; set; }    
     public DateTime DepartureTime { get; set; }
     public DateTime ArrivalTime { get; set; }
@@ -23,8 +20,6 @@ public class Flight : Entity<int>
     public string? CabinClass { get; set; }
     public string? BrandedFareName { get; set; }
     public string? Luggage { get; set; }
-
-
 
     public virtual Airline Airline { get; set; }
     public virtual Airport DepartureAirport { get; set; }

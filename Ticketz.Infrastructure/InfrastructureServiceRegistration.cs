@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ticketz.Application.Services.SearchFlightService;
-using Ticketz.Infrastructure.BookingFlightApi;
+using Ticketz.Infrastructure.ExternalServices.BookingFlightApi;
 
 namespace Ticketz.Infrastructure;
 

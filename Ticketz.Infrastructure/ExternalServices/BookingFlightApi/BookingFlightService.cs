@@ -9,14 +9,17 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ticketz.Application.DTOs.FlightDto;
-using Ticketz.Application.Features.Flights.Queries;
+using Ticketz.Application.Features.SearchFlights.Queries;
+using Ticketz.Application.Features.SearchFlights.Queries.GetFlightDetails;
+using Ticketz.Application.Features.SearchFlights.Queries.SearchFlight;
 using Ticketz.Application.Services.Repositories;
 using Ticketz.Application.Services.SearchFlightService;
 using Ticketz.Domain.Entities;
-using Ticketz.Infrastructure.Models;
-using static Ticketz.Infrastructure.Models.BookingFlightApiResponseModel;
+using Ticketz.Infrastructure.ExternalServices.Helpers;
+using Ticketz.Infrastructure.Models.BookingFlightApiModels;
+using static Ticketz.Infrastructure.Models.BookingFlightApiModels.BookingFlightApiResponseModel;
 
-namespace Ticketz.Infrastructure.BookingFlightApi;
+namespace Ticketz.Infrastructure.ExternalServices.BookingFlightApi;
 
 public class BookingFlightService : ISearchFlightService
 {
@@ -30,30 +33,33 @@ public class BookingFlightService : ISearchFlightService
         _httpClient = httpClient;
         _configuration = configuration;
         _airlineRepository = airlineRepository;
-        _airportRepository = airportRepository;        
+        _airportRepository = airportRepository;
     }
 
-    public async Task<List<Flight>> SearchFlightAsync(FlightSearchCriteriaDto searchCriteria)
+    public async Task<List<SearchFlightQueryResponse>> SearchFlightAsync(FlightSearchCriteriaDto searchCriteria)
     {
-        var baseUrl = _configuration["BookingApi:BaseUrl"];
-        var apiKey = _configuration["BookingApi:ApiKey"];
-        var apiHost = _configuration["BookingApi:ApiHost"];
+        //var baseUrl = _configuration["BookingApi:BaseUrl"];
+        //var apiKey = _configuration["BookingApi:ApiKey"];
+        //var apiHost = _configuration["BookingApi:ApiHost"];
+        
 
-        var requestUrl = $"{baseUrl}searchFlights?fromId={searchCriteria.DepartureAirport}.AIRPORT&toId={searchCriteria.ArrivalAirport}.AIRPORT" +
-                         $"&departDate={searchCriteria.DepartDate:yyyy-MM-dd}&adults={searchCriteria.AdultPassengers}" +
-                         $"&sort=BEST&cabinClass={searchCriteria.CabinClass}&currency_code={searchCriteria.Currency}";
+        var searchreq = ApiRequestHelper.CreateFlightRequest(_configuration, "searchFlights", searchCriteria);
 
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Get,
-            RequestUri = new Uri(requestUrl),
-        };
+        //var requestUrl = $"{baseUrl}searchFlights?fromId={searchCriteria.DepartureAirport}.AIRPORT&toId={searchCriteria.ArrivalAirport}.AIRPORT" +
+        //                 $"&departDate={searchCriteria.DepartDate:yyyy-MM-dd}&adults={searchCriteria.AdultPassengers}" +
+        //                 $"&sort=BEST&cabinClass={searchCriteria.CabinClass}&currency_code={searchCriteria.Currency}";
 
-        request.Headers.Add("x-rapidapi-key", apiKey);
-        request.Headers.Add("x-rapidapi-host", apiHost);
+        //var request = new HttpRequestMessage
+        //{
+        //    Method = HttpMethod.Get,
+        //    RequestUri = new Uri(searchreq),
+        //};
+
+        //request.Headers.Add("x-rapidapi-key", apiKey);
+        //request.Headers.Add("x-rapidapi-host", apiHost);
 
 
-        using (var response = await _httpClient.SendAsync(request))
+        using (var response = await _httpClient.SendAsync(searchreq))
         {
             response.EnsureSuccessStatusCode();
             var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiResponseModel>();
@@ -61,13 +67,13 @@ public class BookingFlightService : ISearchFlightService
             var iataCode = flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().legs.FirstOrDefault().carriers.FirstOrDefault();
             var airline = await _airlineRepository.GetAsync(a => a.IATACode == iataCode);
 
-            var departure =flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().departureAirport.code;
+            var departure = flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().departureAirport.code;
             var departureAirport = await _airportRepository.GetAsync(a => a.AirportCode == departure);
 
             var arrival = flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().arrivalAirport.code;
             var arrivalAirport = await _airportRepository.GetAsync(a => a.AirportCode == arrival);
 
-            return flightData.data.flightOffers.Select(f => new Flight
+            return flightData.data.flightOffers.Select(f => new SearchFlightQueryResponse
             {
                 DepartureAirportId = departureAirport.Id,
                 DepartureAirportName = departureAirport.Name,
@@ -87,27 +93,29 @@ public class BookingFlightService : ISearchFlightService
         }
     }
 
-    public async Task<Flight> GetFlightDetails(string token)
-    {
-        var baseUrl = _configuration["BookingApi:BaseUrl"];
-        var apiKey = _configuration["BookingApi:ApiKey"];
-        var apiHost = _configuration["BookingApi:ApiHost"];
+    
 
-        var requestUrl = $"{baseUrl}getFlightDetails?currency_code=TRY";
+    //public async Task<GetFlightDetailsQueryResponse> GetFlightDetails(string token)
+    //{
+    //    var baseUrl = _configuration["BookingApi:BaseUrl"];
+    //    var apiKey = _configuration["BookingApi:ApiKey"];
+    //    var apiHost = _configuration["BookingApi:ApiHost"];
 
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Get,
-            RequestUri = new Uri(requestUrl),
-        };
+    //    var requestUrl = $"{baseUrl}getFlightDetails?currency_code=TRY";
 
-        request.Headers.Add("x-rapidapi-key", apiKey);
-        request.Headers.Add("x-rapidapi-host", apiHost);
+    //    var request = new HttpRequestMessage
+    //    {
+    //        Method = HttpMethod.Get,
+    //        RequestUri = new Uri(requestUrl),
+    //    };
 
-        using (var response = await _httpClient.SendAsync(request))
-        {
-            response.EnsureSuccessStatusCode();
-            var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiGetFlightDetailsResponseModel>();
-        }
-    }
+    //    request.Headers.Add("x-rapidapi-key", apiKey);
+    //    request.Headers.Add("x-rapidapi-host", apiHost);
+
+    //    using (var response = await _httpClient.SendAsync(request))
+    //    {
+    //        response.EnsureSuccessStatusCode();
+    //        var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiGetFlightDetailsResponseModel>();
+    //    }
+    //}
 }

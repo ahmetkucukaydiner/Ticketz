@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Ticketz.Application.Features.Flights.Queries;
+using Ticketz.Application.Features.SearchFlights.Queries.SearchFlight;
 
 namespace Ticketz.WebApi.Controllers
 {
@@ -12,7 +12,7 @@ namespace Ticketz.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> SearchFlights([FromBody] SearchFlightQuery query)
         {
-            List<SearchFlightResponse> response = await Mediator.Send(query);
+            List<SearchFlightQueryResponse> response = await Mediator.Send(query);
             return Ok(response);
         }
     }

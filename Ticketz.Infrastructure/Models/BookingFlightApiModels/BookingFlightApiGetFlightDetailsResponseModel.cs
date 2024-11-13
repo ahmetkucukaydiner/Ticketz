@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ticketz.Infrastructure.Models;
+namespace Ticketz.Infrastructure.Models.BookingFlightApiModels;
 
 public class BookingFlightApiGetFlightDetailsResponseModel
 {
     public bool status { get; set; }
     public string message { get; set; }
     public long timestamp { get; set; }
-    public Data data { get; set; }    
+    public Data data { get; set; }
 
     public class Data
     {
