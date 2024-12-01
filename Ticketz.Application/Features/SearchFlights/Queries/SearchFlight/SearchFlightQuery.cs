@@ -18,7 +18,7 @@ public class SearchFlightQuery : IRequest<List<SearchFlightQueryResponse>>, ICac
 {
     public FlightSearchCriteriaDto SearchFlightCriteria { get; set; }
 
-    public string CacheKey => $"SearchFlightQuery{SearchFlightCriteria.DepartureAirport}-{SearchFlightCriteria.ArrivalAirport}-{SearchFlightCriteria.DepartDate}-{SearchFlightCriteria.AdultPassengers}";
+    public string CacheKey => $"SearchFlightQuery{SearchFlightCriteria.fromId}-{SearchFlightCriteria.toId}-{SearchFlightCriteria.DepartDate}-{SearchFlightCriteria.adults}";
     public bool BypassCache { get; }
     public string? CacheGroupKey => "SearchFlight";
     public TimeSpan? SlidingExpiration { get; }

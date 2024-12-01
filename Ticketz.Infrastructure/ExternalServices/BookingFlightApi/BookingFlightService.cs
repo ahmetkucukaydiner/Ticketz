@@ -52,7 +52,7 @@ public class BookingFlightService : ISearchFlightService
         //var request = new HttpRequestMessage
         //{
         //    Method = HttpMethod.Get,
-        //    RequestUri = new Uri(searchreq),
+        //    RequestUri = new Uri(requestUrl)
         //};
 
         //request.Headers.Add("x-rapidapi-key", apiKey);
@@ -64,14 +64,12 @@ public class BookingFlightService : ISearchFlightService
             response.EnsureSuccessStatusCode();
             var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiResponseModel>();
 
-            var iataCode = flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().legs.FirstOrDefault().carriers.FirstOrDefault();
-            var airline = await _airlineRepository.GetAsync(a => a.IATACode == iataCode);
+            var airline = await IataCodeIsExists(flightData);
 
-            var departure = flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().departureAirport.code;
-            var departureAirport = await _airportRepository.GetAsync(a => a.AirportCode == departure);
+            var departureAirport = await DepartureAirportIsExists(flightData);
 
-            var arrival = flightData.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().arrivalAirport.code;
-            var arrivalAirport = await _airportRepository.GetAsync(a => a.AirportCode == arrival);
+            var arrivalAirport = await ArrivalAirportIsExists(flightData);
+
 
             return flightData.data.flightOffers.Select(f => new SearchFlightQueryResponse
             {
@@ -84,16 +82,61 @@ public class BookingFlightService : ISearchFlightService
                 AirlineId = airline.Id,
                 AirlineName = airline.Name,
                 FlightNumber = f.segments.FirstOrDefault().legs.FirstOrDefault().flightInfo.flightNumber,
-                AdultPassengers = searchCriteria.AdultPassengers,
+                AdultPassengers = searchCriteria.adults,
                 BrandedFareName = f.brandedFareInfo?.fareName ?? "N/A",
                 CabinClass = f.segments.FirstOrDefault()?.legs?.FirstOrDefault()?.cabinClass ?? "Economy",
                 Luggage = f.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
-                Price = f.priceBreakdown?.total?.units ?? 0
+                Price = f.priceBreakdown?.total?.units ?? 0 ,
+                Token = f.token
             }).ToList();
         }
     }
 
-    
+    private async Task<Domain.Entities.Airline> IataCodeIsExists(BookingFlightApiResponseModel model)
+    {
+        var iataCode = model.data.flightOffers
+            .FirstOrDefault()?
+            .segments.FirstOrDefault()?
+            .legs.FirstOrDefault()?
+            .carriers.FirstOrDefault();
+
+        if (iataCode == null)
+            throw new Exception("Iata Code could not be found");
+
+        var airline = await _airlineRepository.GetAsync(a => a.IATACode == iataCode);
+
+        return airline;
+    }
+
+    private async Task<Airport> DepartureAirportIsExists(BookingFlightApiResponseModel model)
+    {
+        var departureAirport = model.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().departureAirport.code;
+
+        if(departureAirport == null)
+        {
+            throw new Exception("Departure Airport could not be found");
+        }
+
+        var airport = await _airportRepository.GetAsync(a => a.AirportCode == departureAirport);
+
+        return airport;
+    }
+
+    private async Task<Airport> ArrivalAirportIsExists(BookingFlightApiResponseModel model)
+    {
+        var arrivalAirport = model.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().departureAirport.code;
+
+        if (arrivalAirport == null)
+        {
+            throw new Exception("Departure Airport could not be found");
+        }
+
+        var airport = await _airportRepository.GetAsync(a => a.AirportCode == arrivalAirport);
+
+        return airport;
+    }
+
+
 
     //public async Task<GetFlightDetailsQueryResponse> GetFlightDetails(string token)
     //{

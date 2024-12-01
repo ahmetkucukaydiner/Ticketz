@@ -8,12 +8,22 @@ namespace Ticketz.Application.DTOs.FlightDto;
 
 public class FlightSearchCriteriaDto
 {
-    public string DepartureAirport { get; set; }
-    public string ArrivalAirport { get; set; }
+    private string _fromId;
+    private string _toId;
+
+    public string fromId 
+    { 
+        get=> $"{_fromId}.AIRPORT"; 
+        set => _fromId = value; 
+    }
+    public string toId 
+    {
+        get => $"{_toId}.AIRPORT";
+        set => _toId = value;
+    }
     public DateTime DepartDate { get; set; }
-    public DateTime? ReturnDate { get; set; }
-    public int AdultPassengers { get; set; } = 1;
+    public int adults { get; set; } = 1;
     public string Sort { get; set; }
     public string? CabinClass { get; set; } = "ECONOMY";
-    public string? Currency { get; set; } = "TRY";
+    public string? currency_code { get; set; } = "TRY";
 }

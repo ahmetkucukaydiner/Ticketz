@@ -23,6 +23,6 @@ namespace Ticketz.Application.Features.SearchFlights.Queries.SearchFlight
         public string? CabinClass { get; set; }
         public string? BrandedFareName { get; set; }
         public string? Luggage { get; set; }
-        public string Token { get; set; }
+        public string? Token { get; set; }
     }
 }
