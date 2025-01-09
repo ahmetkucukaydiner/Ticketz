@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ticketz.Domain", "Ticketz.Domain\Ticketz.Domain.csproj", "{DB4C0CC9-9F75-4D9F-AB7A-E7A6EF4CDC6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ticketz.Domain", "Ticketz.Domain\Ticketz.Domain.csproj", "{DB4C0CC9-9F75-4D9F-AB7A-E7A6EF4CDC6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ticketz.Application", "Ticketz.Application\Ticketz.Application.csproj", "{6D83BF0E-5FD9-4F4F-866F-187DAA8BDF82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ticketz.Application", "Ticketz.Application\Ticketz.Application.csproj", "{6D83BF0E-5FD9-4F4F-866F-187DAA8BDF82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ticketz.Infrastructure", "Ticketz.Infrastructure\Ticketz.Infrastructure.csproj", "{5371CAEA-DCA0-4C0A-B2A9-AF5B7B972CFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ticketz.Infrastructure", "Ticketz.Infrastructure\Ticketz.Infrastructure.csproj", "{5371CAEA-DCA0-4C0A-B2A9-AF5B7B972CFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ticketz.Persistence", "Ticketz.Persistence\Ticketz.Persistence.csproj", "{FC4DA026-E09B-4EC2-BB32-66789438C9DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ticketz.Persistence", "Ticketz.Persistence\Ticketz.Persistence.csproj", "{FC4DA026-E09B-4EC2-BB32-66789438C9DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ticketz.WebApi", "Ticketz.WebApi\Ticketz.WebApi.csproj", "{0D8D9DF1-E3E3-4D55-A56C-1FBD086AA772}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ticketz.WebApi", "Ticketz.WebApi\Ticketz.WebApi.csproj", "{0D8D9DF1-E3E3-4D55-A56C-1FBD086AA772}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ticketz.Presentation", "Ticketz.Presentation\Ticketz.Presentation.csproj", "{12A547F4-D79A-4515-BB2F-D94C7197AC8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{0D8D9DF1-E3E3-4D55-A56C-1FBD086AA772}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D8D9DF1-E3E3-4D55-A56C-1FBD086AA772}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D8D9DF1-E3E3-4D55-A56C-1FBD086AA772}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12A547F4-D79A-4515-BB2F-D94C7197AC8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A547F4-D79A-4515-BB2F-D94C7197AC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12A547F4-D79A-4515-BB2F-D94C7197AC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A547F4-D79A-4515-BB2F-D94C7197AC8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

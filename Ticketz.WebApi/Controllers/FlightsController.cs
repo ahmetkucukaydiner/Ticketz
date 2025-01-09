@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Ticketz.Application.Features.SearchFlights.Queries.SearchFlight;
+using Ticketz.Application.Features.Flights.Queries.SearchFlight;
 
 namespace Ticketz.WebApi.Controllers
 {

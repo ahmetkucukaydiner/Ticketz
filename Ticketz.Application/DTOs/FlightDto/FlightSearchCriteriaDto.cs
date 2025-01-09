@@ -21,9 +21,9 @@ public class FlightSearchCriteriaDto
         get => $"{_toId}.AIRPORT";
         set => _toId = value;
     }
-    public DateTime DepartDate { get; set; }
+    public DateTime departDate { get; set; }
     public int adults { get; set; } = 1;
     public string Sort { get; set; }
-    public string? CabinClass { get; set; } = "ECONOMY";
+    public string? cabinClass { get; set; } = "ECONOMY";
     public string? currency_code { get; set; } = "TRY";
 }

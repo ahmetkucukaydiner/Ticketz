@@ -1,27 +1,18 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Ticketz.Application.DTOs.FlightDto;
-using Ticketz.Application.Features.SearchFlights.Queries;
-using Ticketz.Application.Features.SearchFlights.Queries.GetFlightDetails;
-using Ticketz.Application.Features.SearchFlights.Queries.SearchFlight;
+using Ticketz.Application.Features.Flights.Queries.SearchFlight;
+using Ticketz.Application.Services.FlightService;
 using Ticketz.Application.Services.Repositories;
-using Ticketz.Application.Services.SearchFlightService;
 using Ticketz.Domain.Entities;
 using Ticketz.Infrastructure.ExternalServices.Helpers;
 using Ticketz.Infrastructure.Models.BookingFlightApiModels;
-using static Ticketz.Infrastructure.Models.BookingFlightApiModels.BookingFlightApiResponseModel;
+using Airline = Ticketz.Domain.Entities.Airline;
 
 namespace Ticketz.Infrastructure.ExternalServices.BookingFlightApi;
 
-public class BookingFlightService : ISearchFlightService
+public class BookingFlightService : IFlightService
 {
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
@@ -62,13 +53,14 @@ public class BookingFlightService : ISearchFlightService
         using (var response = await _httpClient.SendAsync(searchreq))
         {
             response.EnsureSuccessStatusCode();
+            var flightdata2 = await response.Content.ReadAsStringAsync();
             var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiResponseModel>();
 
-            var airline = await IataCodeIsExists(flightData);
+            Airline airline = await IataCodeIsExists(flightData);
 
-            var departureAirport = await DepartureAirportIsExists(flightData);
+            Airport departureAirport = await DepartureAirportIsExists(flightData);
 
-            var arrivalAirport = await ArrivalAirportIsExists(flightData);
+            Airport arrivalAirport = await ArrivalAirportIsExists(flightData);
 
 
             return flightData.data.flightOffers.Select(f => new SearchFlightQueryResponse
@@ -81,6 +73,7 @@ public class BookingFlightService : ISearchFlightService
                 ArrivalTime = f.segments.FirstOrDefault()?.arrivalTime ?? DateTime.MinValue,
                 AirlineId = airline.Id,
                 AirlineName = airline.Name,
+                AirlineLogo = airline.LogoURL,
                 FlightNumber = f.segments.FirstOrDefault().legs.FirstOrDefault().flightInfo.flightNumber,
                 AdultPassengers = searchCriteria.adults,
                 BrandedFareName = f.brandedFareInfo?.fareName ?? "N/A",

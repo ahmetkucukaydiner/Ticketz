@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ public static class PersistenceServiceRegistration
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IAirlineRepository, AirlineRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IFlightRepository, FlightRepository>();
+        services.AddScoped<IFlightRepository, FlightRepository>();       
 
         return services;
     }
