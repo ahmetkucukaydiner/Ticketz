@@ -18,6 +18,7 @@ public class AirportConfiguration : IEntityTypeConfiguration<Airport>
         builder.Property(a => a.Id).HasColumnName("Id").IsRequired();
         builder.Property(a => a.Name).HasColumnName("Name").IsRequired();
         builder.Property(a => a.AirportCode).HasColumnName("AirportCode").IsRequired();
+        builder.Property(a => a.City).HasColumnName("City").IsRequired();
 
         builder.Property(a => a.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(a => a.DeletedDate).HasColumnName("DeletedDate");

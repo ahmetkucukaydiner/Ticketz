@@ -28,39 +28,25 @@ public class BookingFlightService : IFlightService
     }
 
     public async Task<List<SearchFlightQueryResponse>> SearchFlightAsync(FlightSearchCriteriaDto searchCriteria)
-    {
-        //var baseUrl = _configuration["BookingApi:BaseUrl"];
-        //var apiKey = _configuration["BookingApi:ApiKey"];
-        //var apiHost = _configuration["BookingApi:ApiHost"];
-        
-
+    {       
         var searchreq = ApiRequestHelper.CreateFlightRequest(_configuration, "searchFlights", searchCriteria);
-
-        //var requestUrl = $"{baseUrl}searchFlights?fromId={searchCriteria.DepartureAirport}.AIRPORT&toId={searchCriteria.ArrivalAirport}.AIRPORT" +
-        //                 $"&departDate={searchCriteria.DepartDate:yyyy-MM-dd}&adults={searchCriteria.AdultPassengers}" +
-        //                 $"&sort=BEST&cabinClass={searchCriteria.CabinClass}&currency_code={searchCriteria.Currency}";
-
-        //var request = new HttpRequestMessage
-        //{
-        //    Method = HttpMethod.Get,
-        //    RequestUri = new Uri(requestUrl)
-        //};
-
-        //request.Headers.Add("x-rapidapi-key", apiKey);
-        //request.Headers.Add("x-rapidapi-host", apiHost);
-
 
         using (var response = await _httpClient.SendAsync(searchreq))
         {
             response.EnsureSuccessStatusCode();
-            var flightdata2 = await response.Content.ReadAsStringAsync();
             var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiResponseModel>();
-
-            Airline airline = await IataCodeIsExists(flightData);
 
             Airport departureAirport = await DepartureAirportIsExists(flightData);
 
             Airport arrivalAirport = await ArrivalAirportIsExists(flightData);
+
+            var iataCodes = flightData.data.flightOffers
+           .SelectMany(f => f.segments)
+           .SelectMany(s => s.legs)
+           .SelectMany(l => l.carriers)
+           .Distinct();
+
+            var airlines = await IataCodeIsExists(iataCodes);
 
 
             return flightData.data.flightOffers.Select(f => new SearchFlightQueryResponse
@@ -71,9 +57,9 @@ public class BookingFlightService : IFlightService
                 ArrivalAirportId = arrivalAirport.Id,
                 ArrivalAirportName = arrivalAirport.Name,
                 ArrivalTime = f.segments.FirstOrDefault()?.arrivalTime ?? DateTime.MinValue,
-                AirlineId = airline.Id,
-                AirlineName = airline.Name,
-                AirlineLogo = airline.LogoURL,
+                AirlineId = airlines.Id,
+                AirlineName = airlines.Name,
+                AirlineLogo = f.segments.FirstOrDefault().legs.FirstOrDefault().carriersData.FirstOrDefault().logo,
                 FlightNumber = f.segments.FirstOrDefault().legs.FirstOrDefault().flightInfo.flightNumber,
                 AdultPassengers = searchCriteria.adults,
                 BrandedFareName = f.brandedFareInfo?.fareName ?? "N/A",
@@ -85,20 +71,11 @@ public class BookingFlightService : IFlightService
         }
     }
 
-    private async Task<Domain.Entities.Airline> IataCodeIsExists(BookingFlightApiResponseModel model)
+    private async Task<Domain.Entities.Airline> IataCodeIsExists(IEnumerable<string> iataCodes)
     {
-        var iataCode = model.data.flightOffers
-            .FirstOrDefault()?
-            .segments.FirstOrDefault()?
-            .legs.FirstOrDefault()?
-            .carriers.FirstOrDefault();
+       var airlines = await _airlineRepository.GetAsync(a => iataCodes.Contains(a.IATACode));
 
-        if (iataCode == null)
-            throw new Exception("Iata Code could not be found");
-
-        var airline = await _airlineRepository.GetAsync(a => a.IATACode == iataCode);
-
-        return airline;
+       return airlines;
     }
 
     private async Task<Airport> DepartureAirportIsExists(BookingFlightApiResponseModel model)
@@ -117,7 +94,7 @@ public class BookingFlightService : IFlightService
 
     private async Task<Airport> ArrivalAirportIsExists(BookingFlightApiResponseModel model)
     {
-        var arrivalAirport = model.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().departureAirport.code;
+        var arrivalAirport = model.data.flightOffers.FirstOrDefault().segments.FirstOrDefault().arrivalAirport.code;
 
         if (arrivalAirport == null)
         {

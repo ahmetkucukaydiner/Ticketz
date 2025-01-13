@@ -9,7 +9,7 @@ namespace Ticketz.Application.Features.Flights.Queries.SearchFlight
     public class SearchFlightQueryResponse
     {
         public int AirlineId { get; set; }
-        public Uri AirlineLogo { get; set; }
+        public string AirlineLogo { get; set; }
         public string AirlineName { get; set; }
         public int DepartureAirportId { get; set; }
         public string DepartureAirportName { get; set; }

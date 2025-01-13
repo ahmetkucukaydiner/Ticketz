@@ -1,0 +1,105 @@
+﻿@model List<SearchFlightResponseModel>
+
+@{
+    ViewData["Title"] = "SearchFlights";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<!doctype html>
+<html lang="zxx">
+<body>
+    <br />
+    <br />
+    <br />
+    <br />
+<div class="container mt-4">
+    <!-- Arama Filtreleri -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><i class="bi bi-calendar"></i> Kalkış</label>
+                        <input type="date" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><i class="bi bi-calendar"></i> Varış</label>
+                        <input type="date" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><i class="bi bi-arrow-repeat"></i> Dönüş</label>
+                        <select class="form-control">
+                            <option>Tek Yön</option>
+                            <option>Gidiş-Dönüş</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><i class="bi bi-person"></i> Yolcu</label>
+                        <select class="form-control">
+                            <option>1 Yetişkin</option>
+                            <option>2 Yetişkin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label><i class="bi bi-gear"></i> Sınıf</label>
+                        <select class="form-control">
+                            <option>Ekonomi</option>
+                            <option>Business</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uçuş Listesi -->
+    @foreach (var flight in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <img src="@flight.AirlineLogo" alt="@flight.AirlineName" class="img-fluid" style="max-height: 50px;">
+                        <div class="small text-muted">"Airbus 350"</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="h4 mb-0">@flight.DepartureTime.ToString("HH:mm")</div>
+                        <div class="small text-muted">@flight.DepartureAirportName</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="text-muted"><i class="bi bi-airplane"></i></div>
+                            <div class="small text-muted">
+                                @{
+                                    var duration = flight.ArrivalTime - flight.DepartureTime;
+                                    @($"{duration.Hours}s {duration.Minutes}dk")
+                                }
+                            </div>
+                        <div class="small text-muted">"@flight.Luggage"</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="h4 mb-0">@flight.ArrivalTime.ToString("HH:mm")</div>
+                        <div class="small text-muted">@flight.ArrivalAirportName</div>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        @* @if (flight.Price > 0)
+                        {
+                            <div class="badge bg-success">-@flight.Price%</div>
+                        } *@
+                        <div class="h4 mb-0">$@flight.Price</div>
+                        <button class="btn btn-primary mt-2">Seç</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+</body>
+</html>

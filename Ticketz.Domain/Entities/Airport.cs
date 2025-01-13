@@ -5,6 +5,7 @@ namespace Ticketz.Domain.Entities;
 public class Airport : Entity<int>
 {
     public string Name { get; set; }
+    public string City { get; set; }
     public string Country { get; set; }
     public string AirportCode { get; set; }
 
@@ -18,10 +19,11 @@ public class Airport : Entity<int>
         ArrivingFlights = new HashSet<Flight>();
     }
 
-    public Airport(string name, string country, string airportCode) : this()
+    public Airport(string name, string country, string city, string airportCode) : this()
     {
         Name = name;
         Country = country;
         AirportCode = airportCode;
+        City = city;
     }
 }

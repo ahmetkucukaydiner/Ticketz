@@ -13,11 +13,11 @@ using Ticketz.Application.Services.FlightService;
 
 namespace Ticketz.Application.Features.Flights.Queries.SearchFlight;
 
-public class SearchFlightQuery : IRequest<List<SearchFlightQueryResponse>>, ICachableRequest, ILoggableRequest
+public class SearchFlightQuery : IRequest<List<SearchFlightQueryResponse>>, ILoggableRequest, ICachableRequest
 {
-    public FlightSearchCriteriaDto SearchFlightCriteria { get; set; }
+    public FlightSearchCriteriaDto? SearchFlightCriteria { get; set; }
 
-    public string CacheKey => $"SearchFlightQuery{SearchFlightCriteria.fromId}-{SearchFlightCriteria.toId}-{SearchFlightCriteria.departDate}-{SearchFlightCriteria.adults}";
+    public string CacheKey => $"SearchFlightQuery{SearchFlightCriteria?.fromId ?? "Default"}-{SearchFlightCriteria?.toId ?? "Default"}-{SearchFlightCriteria?.departDate ?? DateTime.MinValue}-{SearchFlightCriteria?.adults ?? 0}";
     public bool BypassCache { get; }
     public string? CacheGroupKey => "SearchFlight";
     public TimeSpan? SlidingExpiration { get; }
@@ -25,13 +25,13 @@ public class SearchFlightQuery : IRequest<List<SearchFlightQueryResponse>>, ICac
     public class SearchFlightQueryHandler : IRequestHandler<SearchFlightQuery, List<SearchFlightQueryResponse>>
     {
         private readonly IFlightService _searchflightService;
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper;        
 
         public SearchFlightQueryHandler(IFlightService searchflightService, IMapper mapper)
         {
             _searchflightService = searchflightService;
             _mapper = mapper;
-        }
+        }        
 
         public async Task<List<SearchFlightQueryResponse>> Handle(SearchFlightQuery request, CancellationToken cancellationToken)
         {

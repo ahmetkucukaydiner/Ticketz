@@ -23,7 +23,7 @@ public class FlightSearchCriteriaDto
     }
     public DateTime departDate { get; set; }
     public int adults { get; set; } = 1;
-    public string Sort { get; set; }
+    public string Sort { get; set; } = "BEST";
     public string? cabinClass { get; set; } = "ECONOMY";
     public string? currency_code { get; set; } = "TRY";
 }

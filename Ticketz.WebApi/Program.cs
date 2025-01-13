@@ -13,6 +13,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddHttpClient();
 //builder.Services.AddSecurityServices();
 
 //builder.Services.AddDistributedMemoryCache();
