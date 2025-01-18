@@ -11,7 +11,7 @@ public class FlightSearchCriteriaDto
     private string _fromId;
     private string _toId;
 
-    public string fromId 
+    public string fromId
     { 
         get=> $"{_fromId}.AIRPORT"; 
         set => _fromId = value; 

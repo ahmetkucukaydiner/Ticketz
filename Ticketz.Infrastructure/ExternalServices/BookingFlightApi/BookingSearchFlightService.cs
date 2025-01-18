@@ -3,23 +3,25 @@ using Newtonsoft.Json;
 using System.Net.Http.Json;
 using Ticketz.Application.DTOs.FlightDto;
 using Ticketz.Application.Features.Flights.Queries.SearchFlight;
+using Ticketz.Application.Features.SearchFlights.Queries.GetFlightDetails;
 using Ticketz.Application.Services.FlightService;
 using Ticketz.Application.Services.Repositories;
 using Ticketz.Domain.Entities;
 using Ticketz.Infrastructure.ExternalServices.Helpers;
 using Ticketz.Infrastructure.Models.BookingFlightApiModels;
+using static Ticketz.Infrastructure.Models.BookingFlightApiModels.BookingFlightApiResponseModel;
 using Airline = Ticketz.Domain.Entities.Airline;
 
 namespace Ticketz.Infrastructure.ExternalServices.BookingFlightApi;
 
-public class BookingFlightService : IFlightService
+public class BookingSearchFlightService : IFlightService
 {
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
     private readonly IAirlineRepository _airlineRepository;
     private readonly IAirportRepository _airportRepository;
 
-    public BookingFlightService(HttpClient httpClient, IConfiguration configuration, IAirlineRepository airlineRepository, IAirportRepository airportRepository)
+    public BookingSearchFlightService(HttpClient httpClient, IConfiguration configuration, IAirlineRepository airlineRepository, IAirportRepository airportRepository)
     {
         _httpClient = httpClient;
         _configuration = configuration;
@@ -106,29 +108,78 @@ public class BookingFlightService : IFlightService
         return airport;
     }
 
+    public async Task<GetFlightDetailsQueryResponse> GetFlightDetails(GetDetailsOfSelectedFlightDto token)
+    {
+        var searchreq = ApiRequestHelper.CreateFlightRequest(_configuration, "getFlightDetails?", token);
 
+        using (var response = await _httpClient.SendAsync(searchreq))
+        {
+            response.EnsureSuccessStatusCode();
+            var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiGetFlightDetailsResponseModel>();
 
-    //public async Task<GetFlightDetailsQueryResponse> GetFlightDetails(string token)
-    //{
-    //    var baseUrl = _configuration["BookingApi:BaseUrl"];
-    //    var apiKey = _configuration["BookingApi:ApiKey"];
-    //    var apiHost = _configuration["BookingApi:ApiHost"];
+            Airport departureAirport = await DepartureAirportIsExistsForDetail(flightData);
 
-    //    var requestUrl = $"{baseUrl}getFlightDetails?currency_code=TRY";
+            Airport arrivalAirport = await ArrivalAirportIsExistsForDetail(flightData);
 
-    //    var request = new HttpRequestMessage
-    //    {
-    //        Method = HttpMethod.Get,
-    //        RequestUri = new Uri(requestUrl),
-    //    };
+            var iataCodes = flightData.data.segments
+           .SelectMany(s => s.legs)
+           .SelectMany(l => l.carriers)
+           .Distinct();
 
-    //    request.Headers.Add("x-rapidapi-key", apiKey);
-    //    request.Headers.Add("x-rapidapi-host", apiHost);
+            var airlines = await IataCodeIsExists(iataCodes);
 
-    //    using (var response = await _httpClient.SendAsync(request))
-    //    {
-    //        response.EnsureSuccessStatusCode();
-    //        var flightData = await response.Content.ReadFromJsonAsync<BookingFlightApiGetFlightDetailsResponseModel>();
-    //    }
-    //}
+            return new GetFlightDetailsQueryResponse
+            {
+                DepartureAirportId = departureAirport.Id,
+                DepartureAirportName = departureAirport.Name,
+                DepartureTime = flightData.data.segments.FirstOrDefault()?.departureTime ?? DateTime.MinValue,
+                ArrivalAirportId = arrivalAirport.Id,
+                ArrivalAirportName = arrivalAirport.Name,
+                ArrivalTime = flightData.data.segments.FirstOrDefault()?.arrivalTime ?? DateTime.MinValue,
+                AirlineId = airlines.Id,
+                AirlineName = airlines.Name,
+                AirlineLogo = flightData.data.segments.FirstOrDefault()?.legs.FirstOrDefault()?.carriersData.FirstOrDefault()?.logo,
+                FlightNumber = flightData.data.segments.FirstOrDefault()?.legs.FirstOrDefault()?.flightInfo.flightNumber,
+                AdultPassengers = flightData.data.passengerInfo.adults,
+                BrandedFareName = flightData.data.brandedFareInfo?.fareName ?? "N/A",
+                CabinClass = flightData.data.segments.FirstOrDefault()?.legs?.FirstOrDefault()?.cabinClass ?? "Economy",
+                Token = flightData.data.token,
+                CabinLuggage = flightData.data.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
+                CheckedLuggage = flightData.data.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
+                Fee = flightData.data.priceBreakdown?.fee ?? 0,
+                LuggageDetail = flightData.data.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
+                Tax = flightData.data.priceBreakdown?.tax?.FirstOrDefault()?.amount ?? 0,
+                TotalPrice = flightData.data.priceBreakdown?.total?.units ?? 0
+            };
+        }
+    }
+
+    private async Task<Airport> DepartureAirportIsExistsForDetail(BookingFlightApiGetFlightDetailsResponseModel model)
+    {
+        var departureAirport = model.data.segments.FirstOrDefault().departureAirport.code;
+
+        if (departureAirport == null)
+        {
+            throw new Exception("Departure Airport could not be found");
+        }
+
+        var airport = await _airportRepository.GetAsync(a => a.AirportCode == departureAirport);
+
+        return airport;
+    }
+
+    private async Task<Airport> ArrivalAirportIsExistsForDetail(BookingFlightApiGetFlightDetailsResponseModel model)
+    {
+        var arrivalAirport = model.data.segments.FirstOrDefault().arrivalAirport.code;
+
+        if (arrivalAirport == null)
+        {
+            throw new Exception("Departure Airport could not be found");
+        }
+
+        var airport = await _airportRepository.GetAsync(a => a.AirportCode == arrivalAirport);
+
+        return airport;
+    }
 }
+

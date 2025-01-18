@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ticketz.Application.Features.SearchFlights.Queries.GetFlightDetails;
 
 namespace Ticketz.Infrastructure.Models.BookingFlightApiModels;
 
 public class BookingFlightApiGetFlightDetailsResponseModel
-{
-    public bool status { get; set; }
-    public string message { get; set; }
-    public long timestamp { get; set; }
-    public Data data { get; set; }
+{    
+     public bool status { get; set; }
+     public string message { get; set; }
+     public long timestamp { get; set; }
+     public Data data { get; set; }
 
     public class Data
     {
@@ -30,13 +31,14 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public Includedproducts includedProducts { get; set; }
         public Extraproduct[] extraProducts { get; set; }
         public Offerextras offerExtras { get; set; }
-        public Brandedfareinfo brandedFareInfo { get; set; }
-        public Farerulesstatus fareRulesStatus { get; set; }
         public Ancillaries ancillaries { get; set; }
+        public Brandedfareinfo brandedFareInfo { get; set; }
         public object[] appliedDiscounts { get; set; }
+        public string offerKeyToHighlight { get; set; }
         public Baggagepolicy[] baggagePolicies { get; set; }
         public Extraproductdisplayrequirements extraProductDisplayRequirements { get; set; }
         public Carbonemissions carbonEmissions { get; set; }
+        public Displayoptions displayOptions { get; set; }
     }
 
     public class Pricebreakdown
@@ -117,7 +119,6 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     {
         public Carrier carrier { get; set; }
         public Avgperadult avgPerAdult { get; set; }
-        public Avgperchild avgPerChild { get; set; }
     }
 
     public class Carrier
@@ -128,13 +129,6 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     }
 
     public class Avgperadult
-    {
-        public string currencyCode { get; set; }
-        public int units { get; set; }
-        public int nanos { get; set; }
-    }
-
-    public class Avgperchild
     {
         public string currencyCode { get; set; }
         public int units { get; set; }
@@ -158,6 +152,7 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     {
         public string luggageType { get; set; }
         public int maxPiece { get; set; }
+        public int piecePerPax { get; set; }
         public float maxWeightPerPiece { get; set; }
         public string massUnit { get; set; }
         public Sizerestrictions sizeRestrictions { get; set; }
@@ -174,12 +169,22 @@ public class BookingFlightApiGetFlightDetailsResponseModel
 
     public class Offerextras
     {
-        public Mobiletravelplan mobileTravelPlan { get; set; }
+        public Flexibleticket flexibleTicket { get; set; }
     }
 
-    public class Mobiletravelplan
+    public class Flexibleticket
     {
+        public string airProductReference { get; set; }
+        public string[] travellers { get; set; }
+        public Recommendation recommendation { get; set; }
         public Pricebreakdown1 priceBreakdown { get; set; }
+        public Supplierinfo supplierInfo { get; set; }
+    }
+
+    public class Recommendation
+    {
+        public bool recommended { get; set; }
+        public string confidence { get; set; }
     }
 
     public class Pricebreakdown1
@@ -188,9 +193,11 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public Basefare1 baseFare { get; set; }
         public Fee1 fee { get; set; }
         public Tax1 tax { get; set; }
+        public Totalrounded1 totalRounded { get; set; }
         public Moretaxesandfees1 moreTaxesAndFees { get; set; }
         public Discount1 discount { get; set; }
         public Totalwithoutdiscount1 totalWithoutDiscount { get; set; }
+        public Totalwithoutdiscountrounded1 totalWithoutDiscountRounded { get; set; }
     }
 
     public class Total1
@@ -221,6 +228,13 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public int nanos { get; set; }
     }
 
+    public class Totalrounded1
+    {
+        public string currencyCode { get; set; }
+        public int nanos { get; set; }
+        public int units { get; set; }
+    }
+
     public class Moretaxesandfees1
     {
     }
@@ -239,45 +253,34 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public int nanos { get; set; }
     }
 
-    public class Brandedfareinfo
+    public class Totalwithoutdiscountrounded1
     {
-        public string fareName { get; set; }
-        public string cabinClass { get; set; }
-        public object[] features { get; set; }
-        public object[] fareAttributes { get; set; }
-        public object[] nonIncludedFeatures { get; set; }
+        public string currencyCode { get; set; }
+        public int nanos { get; set; }
+        public int units { get; set; }
     }
 
-    public class Farerulesstatus
+    public class Supplierinfo
     {
-        public Leg[] legs { get; set; }
-        public bool areAllStatusesIdentical { get; set; }
-        public bool areAllCarriersIdentical { get; set; }
-        public object policy { get; set; }
-    }
-
-    public class Leg
-    {
-        public Legidentifier legIdentifier { get; set; }
-        public string carrierName { get; set; }
-        public string changeable { get; set; }
-        public string refundable { get; set; }
-    }
-
-    public class Legidentifier
-    {
-        public int segmentIndex { get; set; }
-        public int legIndex { get; set; }
+        public string name { get; set; }
+        public string termsUrl { get; set; }
+        public string privacyPolicyUrl { get; set; }
     }
 
     public class Ancillaries
     {
-        public Mobiletravelplan1 mobileTravelPlan { get; set; }
+        public Flexibleticket1 flexibleTicket { get; set; }
+        public Travelinsurance travelInsurance { get; set; }
     }
 
-    public class Mobiletravelplan1
+    public class Flexibleticket1
     {
+        public string airProductReference { get; set; }
+        public string[] travellers { get; set; }
         public Pricebreakdown2 priceBreakdown { get; set; }
+        public bool preSelected { get; set; }
+        public Recommendation1 recommendation { get; set; }
+        public Supplierinfo1 supplierInfo { get; set; }
     }
 
     public class Pricebreakdown2
@@ -337,175 +340,49 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public int nanos { get; set; }
     }
 
-    public class Extraproductdisplayrequirements
+    public class Recommendation1
     {
+        public bool recommended { get; set; }
+        public string confidence { get; set; }
     }
 
-    public class Carbonemissions
+    public class Supplierinfo1
     {
-        public Footprintforoffer footprintForOffer { get; set; }
+        public string name { get; set; }
+        public string termsUrl { get; set; }
+        public string privacyPolicyUrl { get; set; }
     }
 
-    public class Footprintforoffer
+    public class Travelinsurance
     {
-        public float quantity { get; set; }
-        public string unit { get; set; }
-        public string status { get; set; }
-        public int average { get; set; }
-        public int percentageDifference { get; set; }
+        public Options options { get; set; }
+        public Documents documents { get; set; }
+        public Content content { get; set; }
+        public bool forceForAllTravellers { get; set; }
+        public bool isPerTraveller { get; set; }
+        public int version { get; set; }
+        public Recommendation2 recommendation { get; set; }
     }
 
-    public class Segment1
-    {
-        public Departureairport departureAirport { get; set; }
-        public Arrivalairport arrivalAirport { get; set; }
-        public DateTime departureTime { get; set; }
-        public DateTime arrivalTime { get; set; }
-        public Leg1[] legs { get; set; }
-        public int totalTime { get; set; }
-        public Travellercheckedluggage[] travellerCheckedLuggage { get; set; }
-        public Travellercabinluggage[] travellerCabinLuggage { get; set; }
-        public bool isAtolProtected { get; set; }
-        public bool showWarningDestinationAirport { get; set; }
-        public bool showWarningOriginAirport { get; set; }
-    }
-
-    public class Departureairport
+    public class Options
     {
         public string type { get; set; }
-        public string code { get; set; }
-        public string city { get; set; }
-        public string cityName { get; set; }
-        public string country { get; set; }
-        public string countryName { get; set; }
-        public string name { get; set; }
+        public string[] travellers { get; set; }
+        public Pricebreakdown3 priceBreakdown { get; set; }
+        public string disclaimer { get; set; }
+        public string termsAndConditionsUrl { get; set; }
+        public string productInformationDocumentUrl { get; set; }
     }
 
-    public class Arrivalairport
-    {
-        public string type { get; set; }
-        public string code { get; set; }
-        public string city { get; set; }
-        public string cityName { get; set; }
-        public string country { get; set; }
-        public string countryName { get; set; }
-        public string name { get; set; }
-    }
-
-    public class Leg1
-    {
-        public DateTime departureTime { get; set; }
-        public DateTime arrivalTime { get; set; }
-        public Departureairport1 departureAirport { get; set; }
-        public Arrivalairport1 arrivalAirport { get; set; }
-        public string cabinClass { get; set; }
-        public Flightinfo flightInfo { get; set; }
-        public string[] carriers { get; set; }
-        public Carriersdata[] carriersData { get; set; }
-        public int totalTime { get; set; }
-        public object[] flightStops { get; set; }
-    }
-
-    public class Departureairport1
-    {
-        public string type { get; set; }
-        public string code { get; set; }
-        public string city { get; set; }
-        public string cityName { get; set; }
-        public string country { get; set; }
-        public string countryName { get; set; }
-        public string name { get; set; }
-    }
-
-    public class Arrivalairport1
-    {
-        public string type { get; set; }
-        public string code { get; set; }
-        public string city { get; set; }
-        public string cityName { get; set; }
-        public string country { get; set; }
-        public string countryName { get; set; }
-        public string name { get; set; }
-    }
-
-    public class Flightinfo
-    {
-        public object[] facilities { get; set; }
-        public int flightNumber { get; set; }
-        public string planeType { get; set; }
-        public Carrierinfo carrierInfo { get; set; }
-    }
-
-    public class Carrierinfo
-    {
-        public string operatingCarrier { get; set; }
-        public string marketingCarrier { get; set; }
-        public string operatingCarrierDisclosureText { get; set; }
-    }
-
-    public class Carriersdata
-    {
-        public string name { get; set; }
-        public string code { get; set; }
-        public string logo { get; set; }
-    }
-
-    public class Travellercheckedluggage
-    {
-        public string travellerReference { get; set; }
-        public Luggageallowance luggageAllowance { get; set; }
-    }
-
-    public class Luggageallowance
-    {
-        public string luggageType { get; set; }
-        public string ruleType { get; set; }
-        public int maxPiece { get; set; }
-        public float maxWeightPerPiece { get; set; }
-        public string massUnit { get; set; }
-    }
-
-    public class Travellercabinluggage
-    {
-        public string travellerReference { get; set; }
-        public Luggageallowance1 luggageAllowance { get; set; }
-    }
-
-    public class Luggageallowance1
-    {
-        public string luggageType { get; set; }
-        public int maxPiece { get; set; }
-        public float maxWeightPerPiece { get; set; }
-        public string massUnit { get; set; }
-        public Sizerestrictions1 sizeRestrictions { get; set; }
-    }
-
-    public class Sizerestrictions1
-    {
-        public float maxLength { get; set; }
-        public float maxWidth { get; set; }
-        public float maxHeight { get; set; }
-        public string sizeUnit { get; set; }
-    }
-
-    public class Travellerprice
-    {
-        public Travellerpricebreakdown travellerPriceBreakdown { get; set; }
-        public string travellerReference { get; set; }
-        public string travellerType { get; set; }
-    }
-
-    public class Travellerpricebreakdown
+    public class Pricebreakdown3
     {
         public Total3 total { get; set; }
         public Basefare3 baseFare { get; set; }
         public Fee3 fee { get; set; }
         public Tax3 tax { get; set; }
-        public Totalrounded1 totalRounded { get; set; }
         public Moretaxesandfees3 moreTaxesAndFees { get; set; }
         public Discount3 discount { get; set; }
         public Totalwithoutdiscount3 totalWithoutDiscount { get; set; }
-        public Totalwithoutdiscountrounded1 totalWithoutDiscountRounded { get; set; }
     }
 
     public class Total3
@@ -536,13 +413,6 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public int nanos { get; set; }
     }
 
-    public class Totalrounded1
-    {
-        public string currencyCode { get; set; }
-        public int nanos { get; set; }
-        public int units { get; set; }
-    }
-
     public class Moretaxesandfees3
     {
     }
@@ -561,7 +431,296 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public int nanos { get; set; }
     }
 
-    public class Totalwithoutdiscountrounded1
+    public class Documents
+    {
+        public string terms_and_conditions { get; set; }
+    }
+
+    public class Content
+    {
+        public string header { get; set; }
+        public string subheader { get; set; }
+        public string optInTitle { get; set; }
+        public string optOutTitle { get; set; }
+        public string[] exclusions { get; set; }
+        public string coveredStatusLabel { get; set; }
+        public string notCoveredStatusLabel { get; set; }
+        public string benefitsTitle { get; set; }
+        public string closeA11y { get; set; }
+        public string paxStatus { get; set; }
+        public string[] benefits { get; set; }
+        public string[] finePrint { get; set; }
+    }
+
+    public class Recommendation2
+    {
+        public bool recommended { get; set; }
+        public string confidence { get; set; }
+    }
+
+    public class Brandedfareinfo
+    {
+        public string fareName { get; set; }
+        public Feature[] features { get; set; }
+        public object[] fareAttributes { get; set; }
+        public bool nonIncludedFeaturesRequired { get; set; }
+        public object[] nonIncludedFeatures { get; set; }
+    }
+
+    public class Feature
+    {
+        public string featureName { get; set; }
+        public string category { get; set; }
+        public string code { get; set; }
+        public string label { get; set; }
+        public string availability { get; set; }
+    }
+
+    public class Extraproductdisplayrequirements
+    {
+    }
+
+    public class Carbonemissions
+    {
+        public Footprintforoffer footprintForOffer { get; set; }
+        public string faqUrl { get; set; }
+    }
+
+    public class Footprintforoffer
+    {
+        public float quantity { get; set; }
+        public string unit { get; set; }
+        public string status { get; set; }
+        public float average { get; set; }
+        public int percentageDifference { get; set; }
+    }
+
+    public class Displayoptions
+    {
+        public bool skipExtrasPage { get; set; }
+    }
+
+    public class Segment1
+    {
+        public Departureairport departureAirport { get; set; }
+        public Arrivalairport arrivalAirport { get; set; }
+        public DateTime departureTime { get; set; }
+        public DateTime arrivalTime { get; set; }
+        public Leg[] legs { get; set; }
+        public int totalTime { get; set; }
+        public Travellercheckedluggage[] travellerCheckedLuggage { get; set; }
+        public Travellercabinluggage[] travellerCabinLuggage { get; set; }
+        public bool isAtolProtected { get; set; }
+        public bool showWarningDestinationAirport { get; set; }
+        public bool showWarningOriginAirport { get; set; }
+    }
+
+    public class Departureairport
+    {
+        public string type { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string cityName { get; set; }
+        public string country { get; set; }
+        public string countryName { get; set; }
+        public string province { get; set; }
+    }
+
+    public class Arrivalairport
+    {
+        public string type { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string cityName { get; set; }
+        public string country { get; set; }
+        public string countryName { get; set; }
+    }
+
+    public class Leg
+    {
+        public DateTime departureTime { get; set; }
+        public DateTime arrivalTime { get; set; }
+        public Departureairport1 departureAirport { get; set; }
+        public Arrivalairport1 arrivalAirport { get; set; }
+        public string cabinClass { get; set; }
+        public Flightinfo flightInfo { get; set; }
+        public string[] carriers { get; set; }
+        public Carriersdata[] carriersData { get; set; }
+        public int totalTime { get; set; }
+        public object[] flightStops { get; set; }
+        public Amenity[] amenities { get; set; }
+    }
+
+    public class Departureairport1
+    {
+        public string type { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string cityName { get; set; }
+        public string country { get; set; }
+        public string countryName { get; set; }
+        public string province { get; set; }
+    }
+
+    public class Arrivalairport1
+    {
+        public string type { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string cityName { get; set; }
+        public string country { get; set; }
+        public string countryName { get; set; }
+    }
+
+    public class Flightinfo
+    {
+        public object[] facilities { get; set; }
+        public int flightNumber { get; set; }
+        public string planeType { get; set; }
+        public Carrierinfo carrierInfo { get; set; }
+    }
+
+    public class Carrierinfo
+    {
+        public string operatingCarrier { get; set; }
+        public string marketingCarrier { get; set; }
+        public string operatingCarrierDisclosureText { get; set; }
+    }
+
+    public class Carriersdata
+    {
+        public string name { get; set; }
+        public string code { get; set; }
+        public string logo { get; set; }
+    }
+
+    public class Amenity
+    {
+        public string category { get; set; }
+        public string model { get; set; }
+        public string type { get; set; }
+        public string legroom { get; set; }
+        public int pitch { get; set; }
+        public string pitchUnit { get; set; }
+    }
+
+    public class Travellercheckedluggage
+    {
+        public string travellerReference { get; set; }
+        public Luggageallowance luggageAllowance { get; set; }
+    }
+
+    public class Luggageallowance
+    {
+        public string luggageType { get; set; }
+        public string ruleType { get; set; }
+        public int maxPiece { get; set; }
+        public float maxWeightPerPiece { get; set; }
+        public string massUnit { get; set; }
+    }
+
+    public class Travellercabinluggage
+    {
+        public string travellerReference { get; set; }
+        public Luggageallowance1 luggageAllowance { get; set; }
+        public bool personalItem { get; set; }
+    }
+
+    public class Luggageallowance1
+    {
+        public string luggageType { get; set; }
+        public int maxPiece { get; set; }
+        public float maxWeightPerPiece { get; set; }
+        public string massUnit { get; set; }
+        public Sizerestrictions1 sizeRestrictions { get; set; }
+    }
+
+    public class Sizerestrictions1
+    {
+        public float maxLength { get; set; }
+        public float maxWidth { get; set; }
+        public float maxHeight { get; set; }
+        public string sizeUnit { get; set; }
+    }
+
+    public class Travellerprice
+    {
+        public Travellerpricebreakdown travellerPriceBreakdown { get; set; }
+        public string travellerReference { get; set; }
+        public string travellerType { get; set; }
+    }
+
+    public class Travellerpricebreakdown
+    {
+        public Total4 total { get; set; }
+        public Basefare4 baseFare { get; set; }
+        public Fee4 fee { get; set; }
+        public Tax4 tax { get; set; }
+        public Totalrounded2 totalRounded { get; set; }
+        public Moretaxesandfees4 moreTaxesAndFees { get; set; }
+        public Discount4 discount { get; set; }
+        public Totalwithoutdiscount4 totalWithoutDiscount { get; set; }
+        public Totalwithoutdiscountrounded2 totalWithoutDiscountRounded { get; set; }
+    }
+
+    public class Total4
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Basefare4
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Fee4
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Tax4
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Totalrounded2
+    {
+        public string currencyCode { get; set; }
+        public int nanos { get; set; }
+        public int units { get; set; }
+    }
+
+    public class Moretaxesandfees4
+    {
+    }
+
+    public class Discount4
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Totalwithoutdiscount4
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Totalwithoutdiscountrounded2
     {
         public string currencyCode { get; set; }
         public int nanos { get; set; }
@@ -572,7 +731,6 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     {
         public string travellerReference { get; set; }
         public string type { get; set; }
-        public int age { get; set; }
     }
 
     public class Includedproductsbysegment
@@ -608,60 +766,60 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     public class Extraproduct
     {
         public string type { get; set; }
-        public Pricebreakdown3 priceBreakdown { get; set; }
+        public Pricebreakdown4 priceBreakdown { get; set; }
     }
 
-    public class Pricebreakdown3
+    public class Pricebreakdown4
     {
-        public Total4 total { get; set; }
-        public Basefare4 baseFare { get; set; }
-        public Fee4 fee { get; set; }
-        public Tax4 tax { get; set; }
-        public Moretaxesandfees4 moreTaxesAndFees { get; set; }
-        public Discount4 discount { get; set; }
-        public Totalwithoutdiscount4 totalWithoutDiscount { get; set; }
+        public Total5 total { get; set; }
+        public Basefare5 baseFare { get; set; }
+        public Fee5 fee { get; set; }
+        public Tax5 tax { get; set; }
+        public Moretaxesandfees5 moreTaxesAndFees { get; set; }
+        public Discount5 discount { get; set; }
+        public Totalwithoutdiscount5 totalWithoutDiscount { get; set; }
     }
 
-    public class Total4
-    {
-        public string currencyCode { get; set; }
-        public int units { get; set; }
-        public int nanos { get; set; }
-    }
-
-    public class Basefare4
+    public class Total5
     {
         public string currencyCode { get; set; }
         public int units { get; set; }
         public int nanos { get; set; }
     }
 
-    public class Fee4
+    public class Basefare5
     {
         public string currencyCode { get; set; }
         public int units { get; set; }
         public int nanos { get; set; }
     }
 
-    public class Tax4
+    public class Fee5
     {
         public string currencyCode { get; set; }
         public int units { get; set; }
         public int nanos { get; set; }
     }
 
-    public class Moretaxesandfees4
-    {
-    }
-
-    public class Discount4
+    public class Tax5
     {
         public string currencyCode { get; set; }
         public int units { get; set; }
         public int nanos { get; set; }
     }
 
-    public class Totalwithoutdiscount4
+    public class Moretaxesandfees5
+    {
+    }
+
+    public class Discount5
+    {
+        public string currencyCode { get; set; }
+        public int units { get; set; }
+        public int nanos { get; set; }
+    }
+
+    public class Totalwithoutdiscount5
     {
         public string currencyCode { get; set; }
         public int units { get; set; }

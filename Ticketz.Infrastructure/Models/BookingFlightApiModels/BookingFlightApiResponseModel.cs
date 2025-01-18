@@ -14,8 +14,7 @@ public class BookingFlightApiResponseModel
     [JsonProperty("message")]
     public string message { get; set; }
     public long timestamp { get; set; }
-    public Data data { get; set; }  
-    
+    public Data data { get; set; }    
 
     public class Data
     {

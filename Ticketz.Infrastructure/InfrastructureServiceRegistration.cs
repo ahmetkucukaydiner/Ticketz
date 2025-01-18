@@ -16,8 +16,8 @@ public static class InfrastructureServiceRegistration
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddScoped<IFlightService, BookingFlightService>();
-        services.AddHttpClient<BookingFlightService>();
+        services.AddScoped<IFlightService, BookingSearchFlightService>();
+        services.AddHttpClient<BookingSearchFlightService>();
         services.AddLogging();
         return services;
     }
