@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
 using Ticketz.Application.DTOs.FlightDto;
@@ -11,14 +12,14 @@ namespace Ticketz.Presentation.Controllers
 	[AllowAnonymous]
 	public class FlightController : Controller
 	{
-		private readonly IHttpClientFactory _httpClientFactory;
+		private readonly IHttpClientFactory _httpClientFactory;        
 
-		public FlightController(IHttpClientFactory httpClientFactory)
-		{
-			_httpClientFactory = httpClientFactory;
-		}
+        public FlightController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;            
+        }
 
-		[HttpGet]
+        [HttpGet]
 		public IActionResult SearchFlights()
 		{
 			return View();
@@ -27,6 +28,7 @@ namespace Ticketz.Presentation.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SearchFlights([FromForm] SearchFlightModel model)
 		{
+            Console.WriteLine($"fromId: {model.fromId}, fromCode: {model.fromCode}, toId: {model.toId}, toCode: {model.toCode}");
 
             if (!ModelState.IsValid)
             {
@@ -37,8 +39,8 @@ namespace Ticketz.Presentation.Controllers
 			{
 				searchFlightCriteria = new
                 {
-                    fromId = model.fromId,
-                    toId = model.toId,
+                    fromId = model.fromCode,
+                    toId = model.toCode,
                     departDate = model.departDate,
                     adults = model.adults,
                     Sort = model.Sort,
@@ -55,10 +57,79 @@ namespace Ticketz.Presentation.Controllers
 			{
 				var responseData = await response.Content.ReadAsStringAsync();
 				var searchFlightResponse = JsonConvert.DeserializeObject<List<SearchFlightResponseModel>>(responseData);
-				
-				return View("SearchFlights", searchFlightResponse);
+
+                var viewModel = new FlightViewModel
+                {
+                    SearchFlightCriteria = model,
+                    SearchFlightResponse = searchFlightResponse
+                };
+
+                return View("SearchFlights", viewModel);
             }
 			return StatusCode((int)response.StatusCode, response.ReasonPhrase);
 		}
-	}
+
+        [HttpGet]
+		public IActionResult GetFlightDetails()
+        {
+            return View();
+        }
+
+		[HttpPost]
+		public async Task<IActionResult> GetFlightResults(GetFlightDetailsModel model) 
+		{
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var jsonQuery = JsonConvert.SerializeObject(new
+            {
+                getDetailsOfSelectedFlight = new
+                {
+                    token = model.token,
+                    currency_code = model.currency_code
+                }
+            });
+            var content = new StringContent(jsonQuery, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync("https://localhost:7071/api/Flights/GetDetails", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync();
+                var getFlightDetails = JsonConvert.DeserializeObject<GetFlightDetailsResponseModel>(responseData);
+                return View("GetFlightDetails", getFlightDetails);
+            }
+            return StatusCode((int)response.StatusCode, response.ReasonPhrase);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchAirports([FromQuery] string term)
+        {
+            try
+            {   
+                var client = _httpClientFactory.CreateClient();
+                var encodedTerm = Uri.EscapeDataString(term ?? string.Empty);
+                var response = await client.GetAsync($"https://localhost:7071/api/Airports?term={encodedTerm}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = await response.Content.ReadAsStringAsync();
+                   
+                    var jsonResponse = JObject.Parse(responseData);
+
+                    var results = jsonResponse["results"].ToObject<List<AirportSearchResponseModel>>();                
+
+                    return Ok(new { results });
+                }                                
+                return StatusCode((int)response.StatusCode, new { results = new List<object>() });
+            }
+            catch (Exception ex)
+            {                
+                return StatusCode(500, new { results = new List<object>() });
+            }
+        }
+    }
 }

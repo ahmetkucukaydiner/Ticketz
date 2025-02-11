@@ -1,4 +1,24 @@
-﻿@model Ticketz.Presentation.Models.SearchFlightModel
+﻿@model FlightViewModel
+
+
+@section Styles {    
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-selection--single {
+            height: 38px !important;
+            padding: 5px !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 4px !important;
+        }
+
+        .select2-selection__arrow {
+            height: 36px !important;
+        }
+    </style>
+}
 
 <section class="banner-area relative">
 	<div class="overlay overlay-bg"></div>
@@ -23,14 +43,35 @@
 				</ul>
 				<div class="tab-content" id="myTabContent">
 					<div class="tab-pane fade show active" id="flight" role="tabpanel" aria-labelledby="flight-tab">
-						<form method="post" class="form-wrap" asp-controller="Flight" asp-action="SearchFlights">
-							<input type="text" class="form-control" asp-for="fromId" placeholder="Nereden" onfocus="this.placeholder = ''" onblur="this.placeholder = 'From '">
-							<input type="text" class="form-control" asp-for="toId" placeholder="Nereye" onfocus="this.placeholder = ''" onblur="this.placeholder = 'To '">
-							<input type="text" class="form-control date-picker" asp-for="departDate" placeholder="Gidiş Tarihi" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Start '">
-							@* <input type="text" class="form-control date-picker" asp-for="return" placeholder="Dönüş Tarihi" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Return '"> *@
-							<input type="number" min="1" max="20" class="form-control" asp-for="adults" placeholder="Yetişkin Yolcu Sayısı" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Adults '">
-							@* <input type="number" min="1" max="20" class="form-control" name="child" placeholder="Çocuk Yolcu Sayısı" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Child '"> *@
-							<button type="submit" class="btn btn-primary text-uppercase">Ara</button>
+                        <form method="post" class="form-wrap" asp-controller="Flight" asp-action="SearchFlights">
+                            <div class="form-group">
+                                <label>Kalkış Havalimanı</label>
+                                <select class="airport-select" name="departure" style="width: 100%;">
+                                    <option value=""></option>
+                                </select>
+                                <input type="hidden" id="departureAirportCode" name="departureAirportCode" />
+                            </div>
+                            <div class="form-group">
+                                <label>Varış Havalimanı</label>
+                                <select class="airport-select" name="arrival" style="width: 100%;">
+                                    <option value=""></option>
+                                </select>
+                                <input type="hidden" id="arrivalAirportCode" name="arrivalAirportCode" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-calendar"></i> Kalkış</label>
+                                <input type="date" class="form-control" asp-for="SearchFlightCriteria.departDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="form-group">
+                                <label><i class="bi bi-person"></i> Yolcu</label>
+                                <input type="number" class="form-control" asp-for="SearchFlightCriteria.adults" min="1" max="9" value="1" />
+                            </div>
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i> Ara
+                                </button>
+                            </div>    
 						</form>
 					</div>
 					<div class="tab-pane fade" id="hotel" role="tabpanel" aria-labelledby="hotel-tab">
@@ -49,3 +90,81 @@
 		</div>
 	</div>
 </section>
+
+@section Scripts {
+    <script>
+        // Metin içerisindeki "(XXX)" desenini kullanarak havalimanı kodunu çıkartır.
+        function extractAirportCode(text) {
+            const pattern = /\(([A-Z]{3})\)/;
+            const match = pattern.exec(text);
+            if (match && match[1]) {
+                return match[1];
+            }
+            console.warn("Havalimanı kodu çıkarılamadı. Text:", text);
+            return null;
+        }
+
+        $(document).ready(function() {
+        $('.airport-select').select2({
+            placeholder: 'Havalimanı seçiniz',
+            ajax: {
+                url: '@Url.Action("SearchAirports", "Flight")', // API endpoint'iniz
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item.id,
+                                text: item.city + ' - ' + item.airportName,
+                                airportCode: item.airportCode
+                            };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
+        // Havalimanı seçildiğinde AirportCode'u hidden input'a kaydet
+        $('.airport-select').on('select2:select', function(e) {
+            var airportCode = e.params.data.airportCode;
+            if($(this).attr('name') === 'departure') {
+                $('#departureAirportCode').val(airportCode);
+            } else {
+                $('#arrivalAirportCode').val(airportCode);
+            }
+        });
+
+        // Uçuş arama butonu tıklandığında
+        $('#searchFlights').click(function() {
+            var searchData = {
+                fromId: $('#departureAirportCode').val(), // AirportCode değeri
+                toId: $('#arrivalAirportCode').val(), // AirportCode değeri
+                departDate: $('#departDate').val(),
+                adults: 1
+            };
+
+            $.ajax({
+                url: '/Flight/Search',
+                type: 'POST',
+                data: JSON.stringify(searchData),
+                contentType: 'application/json',
+                success: function(response) {
+                    // Başarılı cevabı işle
+                    console.log(response);
+                },
+                error: function(error) {
+                    // Hata durumunu işle
+                    console.error(error);
+                }
+            });
+        });
+    });
+    </script>
+}

@@ -11,6 +11,7 @@
 	@await Html.PartialAsync("/Views/LayoutPartial/_NavbarPartial.cshtml")
 
 	@RenderBody()
+	@await RenderSectionAsync("Scripts", required: false)
 
 	<!-- start footer Area -->
 	@await Html.PartialAsync("/Views/LayoutPartial/_FooterPartial.cshtml")

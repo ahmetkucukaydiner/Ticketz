@@ -7,6 +7,8 @@ using Ticketz.Application.Features.Airports.Commands.Delete;
 using Ticketz.Application.Features.Airports.Commands.Update;
 using Ticketz.Application.Features.Airports.Queries.GetById;
 using Ticketz.Application.Features.Airports.Queries.GetList;
+using Ticketz.Application.Features.Airports.Queries.SearchAirport;
+using Ticketz.Application.Features.Airports.Queries.SearchAirports;
 
 namespace Ticketz.WebApi.Controllers;
 
@@ -21,7 +23,7 @@ public class AirportsController : BaseController
         return Ok(createdAirportResponse);
     }
 
-    [HttpGet]
+    [HttpGet("GetList")]
     public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
         GetListAirportQuery getListAirportQuery = new() { PageRequest = pageRequest };
@@ -49,5 +51,14 @@ public class AirportsController : BaseController
     {
         DeletedAirportResponse response = await Mediator.Send(new DeleteAirportCommand { Id = id });
         return Ok(response);
+    }    
+
+    [HttpGet]
+    public async Task<IActionResult> Search([FromQuery] string term)
+    {
+        var query = new SearchAirportsQuery { SearchTerm = term };
+        var result = await Mediator.Send(query);
+
+        return Ok(new { results = result });
     }
 }

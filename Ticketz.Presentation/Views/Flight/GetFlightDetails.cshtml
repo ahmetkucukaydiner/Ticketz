@@ -1,0 +1,135 @@
+﻿@model GetFlightDetailsResponseModel
+@{
+    ViewData["Title"] = "GetFlightDetails";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<div class="container my-5">
+    <!-- Başlık ve Özet Bilgiler -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-0">Uçuş Detayları</h4>
+                    <p class="text-muted mb-0">@Model.LuggageDetail</p>
+                    
+                </div>
+                <div class="text-end">
+                    <h3 class="text-primary mb-0">₺@Model.TotalPrice</h3>
+                    <small class="text-muted">@Model.TotalPrice yolcu için toplam fiyat</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uçuş Segmentleri -->    
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">@Model.AirlineName Uçuşu</h5>
+            </div>
+            <div class="card-body">
+                <!-- Havayolu Bilgisi -->
+                <div class="d-flex align-items-center mb-4">
+                <img src="@Model.AirlineLogo" alt="@Model.AirlineName" class="me-3" style="height: 40px;">
+                    <div>
+                    <h6 class="mb-0">@Model.AirlineName</h6>
+                    <small class="text-muted">@Model.FlightNumber | @Model.FlightNumber</small>
+                    </div>
+                </div>
+
+                <!-- Uçuş Bilgileri -->
+                <div class="row">
+                    <!-- Kalkış -->
+                    <div class="col-md-5">
+                        <div class="border-start border-4 border-primary ps-3">
+                        <h3 class="mb-0">@Model.DepartureTime.ToString("HH:mm")</h3>
+                        <h5>@Model.DepartureAirportName</h5>
+                            <p class="text-muted mb-0">
+                            @Model.DepartureAirportName<br />
+                            Terminal: @Model.AirlineName
+                            </p>
+                        <small class="text-muted">@Model.DepartureTime.ToString("dd MMMM yyyy, dddd")</small>
+                        </div>
+                    </div>
+
+                    <!-- Uçuş Süresi -->
+                    <div class="col-md-2 text-center">
+                        <div class="flight-duration-line position-relative">
+                            <i class="bi bi-airplane-fill text-primary"></i>
+                        <div class="text-muted mt-2">@Model.DepartureTime</div>
+                        </div>
+                    </div>
+
+                    <!-- Varış -->
+                    <div class="col-md-5">
+                        <div class="border-start border-4 border-primary ps-3">
+                        <h3 class="mb-0">@Model.ArrivalTime.ToString("HH:mm")</h3>
+                        <h5>@Model.ArrivalAirportName</h5>
+                            <p class="text-muted mb-0">
+                            @Model.ArrivalAirportName<br />
+                            Terminal: @Model.AirlineName
+                            </p>
+                        <small class="text-muted">@Model.ArrivalTime.ToString("dd MMMM yyyy, dddd")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Ek Bilgiler -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-briefcase me-2"></i>Bagaj Bilgisi</h6>
+                    <p class="card-text">@Model.CabinLuggage</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-star me-2"></i>Kabin Sınıfı</h6>
+                    <p class="card-text">@Model.CabinClass</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-arrow-counterclockwise me-2"></i>İptal Koşulları</h6>
+                    <p class="card-text">@Model.Fee</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Satın Alma Butonu -->
+    <div class="text-center mt-4">
+        <button class="btn btn-primary btn-lg">Satın Al</button>
+    </div>
+</div>
+
+<style>
+    .flight-duration-line {
+        padding: 20px 0;
+    }
+
+        .flight-duration-line::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            border-top: 2px dashed #dee2e6;
+            z-index: 0;
+        }
+
+        .flight-duration-line i {
+            position: relative;
+            background: white;
+            padding: 10px;
+            z-index: 1;
+        }
+</style>

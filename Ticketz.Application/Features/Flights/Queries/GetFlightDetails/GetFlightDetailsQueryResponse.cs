@@ -15,7 +15,7 @@ public class GetFlightDetailsQueryResponse
     public string DepartureAirportName { get; set; }
     public int ArrivalAirportId { get; set; }
     public string ArrivalAirportName { get; set; }
-    public int FlightNumber { get; set; }
+    public int? FlightNumber { get; set; }
     public DateTime DepartureTime { get; set; }
     public DateTime ArrivalTime { get; set; }    
     public int AdultPassengers { get; set; }
@@ -28,5 +28,4 @@ public class GetFlightDetailsQueryResponse
     public decimal? Fee { get; set; }
     public decimal? Tax { get; set; }
     public string? LuggageDetail { get; set; }
-
 }

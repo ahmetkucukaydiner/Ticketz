@@ -50,7 +50,6 @@ public class BookingSearchFlightService : IFlightService
 
             var airlines = await IataCodeIsExists(iataCodes);
 
-
             return flightData.data.flightOffers.Select(f => new SearchFlightQueryResponse
             {
                 DepartureAirportId = departureAirport.Id,
@@ -60,7 +59,7 @@ public class BookingSearchFlightService : IFlightService
                 ArrivalAirportName = arrivalAirport.Name,
                 ArrivalTime = f.segments.FirstOrDefault()?.arrivalTime ?? DateTime.MinValue,
                 AirlineId = airlines.Id,
-                AirlineName = airlines.Name,
+                AirlineName = f.segments.FirstOrDefault()?.legs.FirstOrDefault()?.carriersData.FirstOrDefault()?.name,
                 AirlineLogo = f.segments.FirstOrDefault().legs.FirstOrDefault().carriersData.FirstOrDefault().logo,
                 FlightNumber = f.segments.FirstOrDefault().legs.FirstOrDefault().flightInfo.flightNumber,
                 AdultPassengers = searchCriteria.adults,
@@ -110,7 +109,7 @@ public class BookingSearchFlightService : IFlightService
 
     public async Task<GetFlightDetailsQueryResponse> GetFlightDetails(GetDetailsOfSelectedFlightDto token)
     {
-        var searchreq = ApiRequestHelper.CreateFlightRequest(_configuration, "getFlightDetails?", token);
+        var searchreq = ApiRequestHelper.CreateFlightRequest(_configuration, "getFlightDetails", token);
 
         using (var response = await _httpClient.SendAsync(searchreq))
         {
@@ -138,22 +137,21 @@ public class BookingSearchFlightService : IFlightService
                 ArrivalTime = flightData.data.segments.FirstOrDefault()?.arrivalTime ?? DateTime.MinValue,
                 AirlineId = airlines.Id,
                 AirlineName = airlines.Name,
-                AirlineLogo = flightData.data.segments.FirstOrDefault()?.legs.FirstOrDefault()?.carriersData.FirstOrDefault()?.logo,
+                AirlineLogo = flightData.data.segments.FirstOrDefault().legs.FirstOrDefault().carriersData.FirstOrDefault().logo,
                 FlightNumber = flightData.data.segments.FirstOrDefault()?.legs.FirstOrDefault()?.flightInfo.flightNumber,
-                AdultPassengers = flightData.data.passengerInfo.adults,
+                AdultPassengers = flightData.data.travellers.Length,
                 BrandedFareName = flightData.data.brandedFareInfo?.fareName ?? "N/A",
                 CabinClass = flightData.data.segments.FirstOrDefault()?.legs?.FirstOrDefault()?.cabinClass ?? "Economy",
                 Token = flightData.data.token,
                 CabinLuggage = flightData.data.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
                 CheckedLuggage = flightData.data.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
-                Fee = flightData.data.priceBreakdown?.fee ?? 0,
+                Fee = flightData.data.priceBreakdown?.fee.units ?? 0,
                 LuggageDetail = flightData.data.brandedFareInfo?.features?.FirstOrDefault()?.label ?? "No Luggage",
-                Tax = flightData.data.priceBreakdown?.tax?.FirstOrDefault()?.amount ?? 0,
+                Tax = flightData.data.priceBreakdown?.tax?.units ?? 0,
                 TotalPrice = flightData.data.priceBreakdown?.total?.units ?? 0
             };
         }
     }
-
     private async Task<Airport> DepartureAirportIsExistsForDetail(BookingFlightApiGetFlightDetailsResponseModel model)
     {
         var departureAirport = model.data.segments.FirstOrDefault().departureAirport.code;
@@ -182,4 +180,3 @@ public class BookingSearchFlightService : IFlightService
         return airport;
     }
 }
-

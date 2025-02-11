@@ -1,14 +1,52 @@
-﻿<script src="~/travelista/js/vendor/jquery-2.2.4.min.js"></script>
-<script src="~/travelista/js/popper.min.js"></script>
-<script src="~/travelista/js/vendor/bootstrap.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
-<script src="~/travelista/js/jquery-ui.js"></script>
-<script src="~/travelista/js/easing.min.js"></script>
-<script src="~/travelista/js/hoverIntent.js"></script>
-<script src="~/travelista/js/superfish.min.js"></script>
-<script src="~/travelista/js/jquery.ajaxchimp.min.js"></script>
-<script src="~/travelista/js/jquery.magnific-popup.min.js"></script>
-<script src="~/travelista/js/jquery.nice-select.min.js"></script>
-<script src="~/travelista/js/owl.carousel.min.js"></script>
-<script src="~/travelista/js/mail-script.js"></script>
-<script src="~/travelista/js/main.js"></script>
+﻿<!-- Önce jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Sonra Bootstrap -->
+<script src="/travelista/js/popper.min.js"></script>
+<script src="/travelista/js/vendor/bootstrap.min.js"></script>
+
+<!-- Sonra Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/tr.js"></script>
+
+<!-- Sonra diğer plugin'ler -->
+<script src="/travelista/js/jquery-ui.js"></script>
+<script src="/travelista/js/easing.min.js"></script>
+<script src="/travelista/js/hoverIntent.js"></script>
+<script src="/travelista/js/superfish.min.js"></script>
+<script src="/travelista/js/jquery.ajaxchimp.min.js"></script>
+<script src="/travelista/js/jquery.magnific-popup.min.js"></script>
+<script src="/travelista/js/jquery.nice-select.min.js"></script>
+<script src="/travelista/js/owl.carousel.min.js"></script>
+
+<!-- En son custom script'ler -->
+<script src="/travelista/js/main.js"></script>
+
+<!-- Select2 initialization -->
+<script>
+    $(document).ready(function() {
+        $('.airport-select').select2({
+            width: '100%',
+            placeholder: 'Havalimanı seçiniz...',
+            allowClear: true,
+            minimumInputLength: 1,
+            ajax: {
+                url: '@Url.Action("SearchAirports", "Flight")',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    console.log('Arama parametreleri:', params);
+                    return {
+                        term: params.term || ''
+                    };
+                },
+                processResults: function (data) {
+                    console.log('Gelen data:', data);
+                    return {
+                        results: data.results || []
+                    };
+                }
+            }
+        });
+    });        
+</script>

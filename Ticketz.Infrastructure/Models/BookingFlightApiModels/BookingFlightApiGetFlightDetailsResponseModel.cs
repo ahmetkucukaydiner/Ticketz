@@ -9,10 +9,10 @@ namespace Ticketz.Infrastructure.Models.BookingFlightApiModels;
 
 public class BookingFlightApiGetFlightDetailsResponseModel
 {    
-     public bool status { get; set; }
-     public string message { get; set; }
-     public long timestamp { get; set; }
-     public Data data { get; set; }
+    public bool status { get; set; }
+    public string message { get; set; }
+    public long timestamp { get; set; }
+    public Data data { get; set; }   
 
     public class Data
     {
@@ -157,6 +157,7 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public string massUnit { get; set; }
         public Sizerestrictions sizeRestrictions { get; set; }
         public string ruleType { get; set; }
+        public float maxTotalWeight { get; set; }
     }
 
     public class Sizerestrictions
@@ -461,6 +462,7 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     public class Brandedfareinfo
     {
         public string fareName { get; set; }
+        public string cabinClass { get; set; }
         public Feature[] features { get; set; }
         public object[] fareAttributes { get; set; }
         public bool nonIncludedFeaturesRequired { get; set; }
@@ -551,6 +553,8 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public int totalTime { get; set; }
         public object[] flightStops { get; set; }
         public Amenity[] amenities { get; set; }
+        public string departureTerminal { get; set; }
+        public string arrivalTerminal { get; set; }
     }
 
     public class Departureairport1
@@ -602,7 +606,8 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     {
         public string category { get; set; }
         public string model { get; set; }
-        public string type { get; set; }
+        public string cost { get; set; }
+        public object type { get; set; }
         public string legroom { get; set; }
         public int pitch { get; set; }
         public string pitchUnit { get; set; }
@@ -618,9 +623,9 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     {
         public string luggageType { get; set; }
         public string ruleType { get; set; }
-        public int maxPiece { get; set; }
-        public float maxWeightPerPiece { get; set; }
+        public float maxTotalWeight { get; set; }
         public string massUnit { get; set; }
+        public int maxPiece { get; set; }
     }
 
     public class Travellercabinluggage
@@ -749,9 +754,10 @@ public class BookingFlightApiGetFlightDetailsResponseModel
     {
         public string luggageType { get; set; }
         public string ruleType { get; set; }
+        public float maxTotalWeight { get; set; }
+        public string massUnit { get; set; }
         public int maxPiece { get; set; }
         public float maxWeightPerPiece { get; set; }
-        public string massUnit { get; set; }
         public Sizerestrictions2 sizeRestrictions { get; set; }
     }
 
@@ -832,4 +838,5 @@ public class BookingFlightApiGetFlightDetailsResponseModel
         public string name { get; set; }
         public string url { get; set; }
     }
+
 }
