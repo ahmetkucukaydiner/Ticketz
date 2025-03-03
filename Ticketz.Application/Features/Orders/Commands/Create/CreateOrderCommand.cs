@@ -112,14 +112,15 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
             
             await _flightRepository.AddAsync(flight);
             
-            // 3. Sipariş kaydını oluştur
+            // 3. Sipariş kaydını oluştur (PaymentId olmadan)
             var order = new Order
             {
                 CustomerId = customer.Id,
                 AirlineId = request.AirlineId,
                 FlightId = flight.Id,
                 Price = request.Price,
-                OrderState = request.OrderState
+                OrderState = request.OrderState,
+                PaymentId = 0 // Geçici değer, sonra güncellenecek
             };
             
             await _orderRepository.AddAsync(order);
@@ -144,15 +145,16 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
                 throw new Exception("Ödeme işlemi başarısız oldu.");
             }
             
-            // Ödeme başarılı olursa, sipariş durumunu güncelle
+            // 5. Ödeme başarılı olursa, sipariş kaydını güncelle
+            order.PaymentId = paymentResponse.Id;
             await _orderRepository.UpdateAsync(order);
 
-            // 5. Havayolu ve havalimanı bilgilerini getir
+            // 6. Havayolu ve havalimanı bilgilerini getir
             var airline = await _airlineRepository.GetAsync(a => a.Id == request.AirlineId);
             var departureAirport = await _airportRepository.GetAsync(a => a.Id == request.DepartureAirportId);
             var arrivalAirport = await _airportRepository.GetAsync(a => a.Id == request.ArrivalAirportId);
 
-            // 6. Response oluştur
+            // 7. Response oluştur
             CreatedOrderResponse response = _mapper.Map<CreatedOrderResponse>(order);
             
             // Müşteri bilgilerini ekle
@@ -172,8 +174,8 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
             if (airline != null)
             {
                 response.AirlineName = airline.Name;
-            }            
-
+            }           
+                       
             // Ödeme bilgilerini ekle
             response.PaymentId = paymentResponse.PaymentId;
             response.PaymentDate = paymentResponse.PaymentDate;

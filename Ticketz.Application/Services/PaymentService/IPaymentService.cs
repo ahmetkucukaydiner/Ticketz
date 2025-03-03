@@ -22,6 +22,6 @@ public class PaymentResult
 {
     public bool IsSuccessful { get; set; }
     public string? ErrorMessage { get; set; }
-    public string? PaymentResultId { get; set; }
+    public string? PaymentId { get; set; }
     public DateTime PaymentDate { get; set; }
 } 

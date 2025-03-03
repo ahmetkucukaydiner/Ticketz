@@ -5,6 +5,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using Ticketz.Application.Services.PaymentService;
@@ -26,6 +27,7 @@ public class CreatePaymentCommand : IRequest<CreatedPaymentResponse>, ILoggableR
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IPaymentService _paymentService;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
         public CreatePaymentCommandHandler(
@@ -69,7 +71,7 @@ public class CreatePaymentCommand : IRequest<CreatedPaymentResponse>, ILoggableR
 
             // Response oluştur
             var response = _mapper.Map<CreatedPaymentResponse>(payment);
-            response.PaymentId = paymentResult.PaymentResultId;
+            response.PaymentId = paymentResult.PaymentId;
             response.PaymentDate = paymentResult.PaymentDate;
             response.IsSuccessful = true;
 

@@ -19,12 +19,19 @@ namespace Ticketz.Persistence.EntityConfigurations
             builder.Property(p => p.OrderId).HasColumnName("OrderId").IsRequired();
             builder.Property(p => p.CardHolderName).HasColumnName("CardHolderName").IsRequired();
             builder.Property(p => p.CardNumber).HasColumnName("CardNumber").IsRequired();
-            builder.Property(p => p.Cvv).HasColumnName("Cvv").IsRequired();
             builder.Property(p => p.ExpirationDate).HasColumnName("ExpirationDate").IsRequired();
-           
+            builder.Property(p => p.Cvv).HasColumnName("Cvv").IsRequired();
+            builder.Property(p => p.Price).HasColumnName("Price").IsRequired();
             builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-            builder.Property(o => o.DeletedDate).HasColumnName("DeletedDate");
             builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
+            builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
+
+            builder.HasOne(p => p.Order)
+                .WithOne(o => o.Payment)
+                .HasForeignKey<Order>(o => o.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(p => !p.DeletedDate.HasValue);
         }
     }
 }

@@ -17,20 +17,20 @@ public class Order : Entity<int>
     public virtual Airline? Airline { get; set; }
     public virtual Customer? Customer { get; set; }
     public virtual User? User { get; set; }
-    public virtual Payment Payment { get; set; }
+    public virtual Payment? Payment { get; set; }
 
     public Order()
     {        
-
     }
 
     public Order(int id, int paymentId, int customerId, int airlineId, int userId, int flightId, decimal price, OrderState orderState) : this()
     {
         Id = id;
         PaymentId = paymentId;
+        CustomerId = customerId;
         AirlineId = airlineId;
         UserId = userId;
-        CustomerId = customerId;
+        FlightId = flightId;
         Price = price;
         OrderState = orderState;
     }

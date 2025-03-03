@@ -101,7 +101,7 @@ public class DummyPaymentService : IPaymentService
         return new PaymentResult
         {
             IsSuccessful = true,
-            PaymentResultId = GeneratePaymentId(),
+            PaymentId = GeneratePaymentId(),
             PaymentDate = DateTime.Now
         };
     }
