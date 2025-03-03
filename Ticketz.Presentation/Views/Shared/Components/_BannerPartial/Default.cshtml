@@ -46,25 +46,25 @@
                         <form method="post" class="form-wrap" asp-controller="Flight" asp-action="SearchFlights">
                             <div class="form-group">
                                 <label>Kalkış Havalimanı</label>
-                                <select class="airport-select" name="departure" style="width: 100%;">
+                                <select class="airport-select" name="fromCode" style="width: 100%;">
                                     <option value=""></option>
                                 </select>
                                 <input type="hidden" id="departureAirportCode" name="departureAirportCode" />
                             </div>
                             <div class="form-group">
                                 <label>Varış Havalimanı</label>
-                                <select class="airport-select" name="arrival" style="width: 100%;">
+                                <select class="airport-select" name="toCode" style="width: 100%;">
                                     <option value=""></option>
                                 </select>
                                 <input type="hidden" id="arrivalAirportCode" name="arrivalAirportCode" />
                             </div>
                             <div class="form-group">
                                 <label><i class="bi bi-calendar"></i> Kalkış</label>
-                                <input type="date" class="form-control" asp-for="SearchFlightCriteria.departDate" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                <input type="date" class="form-control" asp-for="SearchFlightCriteria.departDate" asp-format="{0:yyyy-MM-dd}" id="departDate" name="departDate"/> @* min="@DateTime.Now.ToString("yyyy-MM-dd")" *@
                             </div>
                             <div class="form-group">
                                 <label><i class="bi bi-person"></i> Yolcu</label>
-                                <input type="number" class="form-control" asp-for="SearchFlightCriteria.adults" min="1" max="9" value="1" />
+                                <input type="number" class="form-control" asp-for="SearchFlightCriteria.adults" id="adults" name="adults" min="1" max="9" value="1" />
                             </div>
                             <div class="form-group">
                                 <label>&nbsp;</label>
@@ -131,23 +131,13 @@
             }
         });
 
-        // Havalimanı seçildiğinde AirportCode'u hidden input'a kaydet
-        $('.airport-select').on('select2:select', function(e) {
-            var airportCode = e.params.data.airportCode;
-            if($(this).attr('name') === 'departure') {
-                $('#departureAirportCode').val(airportCode);
-            } else {
-                $('#arrivalAirportCode').val(airportCode);
-            }
-        });
-
         // Uçuş arama butonu tıklandığında
         $('#searchFlights').click(function() {
             var searchData = {
-                fromId: $('#departureAirportCode').val(), // AirportCode değeri
-                toId: $('#arrivalAirportCode').val(), // AirportCode değeri
+                fromCode: $('#departureAirportCode').val(), // AirportCode değeri
+                toCode: $('#arrivalAirportCode').val() // AirportCode değeri
                 departDate: $('#departDate').val(),
-                adults: 1
+                adults: $('#adults').val()
             };
 
             $.ajax({
@@ -162,8 +152,7 @@
                 error: function(error) {
                     // Hata durumunu işle
                     console.error(error);
-                }
-            });
+                }                   
         });
     });
     </script>

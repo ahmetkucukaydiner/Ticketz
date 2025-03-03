@@ -1,4 +1,5 @@
 ﻿@model GetFlightDetailsResponseModel
+
 @{
     ViewData["Title"] = "GetFlightDetails";
     Layout = "~/Views/Shared/_UILayout.cshtml";
@@ -16,7 +17,7 @@
                 </div>
                 <div class="text-end">
                     <h3 class="text-primary mb-0">₺@Model.TotalPrice</h3>
-                    <small class="text-muted">@Model.TotalPrice yolcu için toplam fiyat</small>
+                    <small class="text-muted">@Model.AdultPassengers yolcu için toplam fiyat</small>
                 </div>
             </div>
         </div>
@@ -75,7 +76,7 @@
                 </div>
             </div>
         </div>
-    }
+    
 
     <!-- Ek Bilgiler -->
     <div class="row">
@@ -107,7 +108,15 @@
 
     <!-- Satın Alma Butonu -->
     <div class="text-center mt-4">
-        <button class="btn btn-primary btn-lg">Satın Al</button>
+        <form action="/Flight/CheckoutFlights" method="get">        
+            <input type="hidden" name="token" value="@Model.Token" /> <!-- Token'ı gizli alan olarak ekleyin -->
+            <input type="hidden" name="totalPrice" value="@Model.TotalPrice" /> <!-- Toplam fiyatı gizli alan olarak ekleyin -->
+            <input type="hidden" name="airlineName" value="@Model.AirlineName" /> <!-- Havayolu ismini gizli alan olarak ekleyin -->
+            <input type="hidden" name="flightNumber" value="@Model.FlightNumber" /> <!-- Uçuş numarasını gizli alan olarak ekleyin -->
+            <input type="hidden" name="departureAirportName" value="@Model.DepartureAirportName" /> <!-- Kalkış havaalanı ismini gizli alan olarak ekleyin -->
+            <input type="hidden" name="arrivalAirportName" value="@Model.ArrivalAirportName" /> <!-- Varış havaalanı ismini gizli alan olarak ekleyin -->
+            <button type="submit" class="btn btn-primary btn-lg">Satın Al</button>
+        </form>        
     </div>
 </div>
 

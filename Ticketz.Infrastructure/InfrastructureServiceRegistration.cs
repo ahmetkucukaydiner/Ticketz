@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Ticketz.Application.Services.FlightService;
 using Ticketz.Infrastructure.ExternalServices.BookingFlightApi;
+using Ticketz.Application.Services.PaymentService;
+using Ticketz.Infrastructure.ExternalServices.Payment;
 
 namespace Ticketz.Infrastructure;
 
@@ -19,6 +21,8 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IFlightService, BookingSearchFlightService>();
         services.AddHttpClient<BookingSearchFlightService>();
         services.AddLogging();
+        services.AddScoped<IPaymentService, DummyPaymentService>();
+        
         return services;
     }
 }

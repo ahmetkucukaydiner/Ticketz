@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Common;
 using System.Net.Http;
 using System.Text;
 using Ticketz.Application.DTOs.FlightDto;
@@ -28,19 +29,19 @@ namespace Ticketz.Presentation.Controllers
 		[HttpPost]
 		public async Task<IActionResult> SearchFlights([FromForm] SearchFlightModel model)
 		{
-            Console.WriteLine($"fromId: {model.fromId}, fromCode: {model.fromCode}, toId: {model.toId}, toCode: {model.toCode}");
+            //Console.WriteLine($"fromId: {model.fromId}, fromCode: {model.fromCode}, toId: {model.toId}, toCode: {model.toCode}");
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             
             var jsonQuery = JsonConvert.SerializeObject(new
 			{
 				searchFlightCriteria = new
                 {
-                    fromId = model.fromCode,
-                    toId = model.toCode,
+                    fromId = model.departureAirportCode,
+                    toId = model.arrivalAirportCode,
                     departDate = model.departDate,
                     adults = model.adults,
                     Sort = model.Sort,
@@ -130,6 +131,24 @@ namespace Ticketz.Presentation.Controllers
             {                
                 return StatusCode(500, new { results = new List<object>() });
             }
+        }
+
+        [HttpGet]
+        public IActionResult CheckoutFlights(string token, decimal totalPrice, string airlineName, int flightNumber, string departureAirportName, string arrivalAirportName)
+        {
+            var viewModel = new FlightViewModel
+            {
+                GetFlightDetailsResponse = new GetFlightDetailsResponseModel
+                {
+                    Token = token,
+                    TotalPrice = totalPrice,
+                    AirlineName = airlineName,
+                    FlightNumber = flightNumber,
+                    DepartureAirportName = departureAirportName,
+                    ArrivalAirportName = arrivalAirportName
+                }
+            };
+            return View(viewModel);
         }
     }
 }

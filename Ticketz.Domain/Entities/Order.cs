@@ -7,10 +7,9 @@ public class Order : Entity<int>
 {
     public int CustomerId { get; set; }
     public int AirlineId { get; set; }
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
     public int FlightId { get; set; }
-    public DateTime DepartureDate { get; set; }
-    public DateTime ArrivalDate { get; set; }
+    public int PaymentId { get; set; }
     public decimal Price { get; set; }
     public OrderState OrderState { get; set; }
 
@@ -18,18 +17,18 @@ public class Order : Entity<int>
     public virtual Airline? Airline { get; set; }
     public virtual Customer? Customer { get; set; }
     public virtual User? User { get; set; }
+    public virtual Payment Payment { get; set; }
 
     public Order()
-    {
+    {        
 
     }
 
-    public Order(int id, int customerId, int airlineId, DateTime departureDate, DateTime arrivalDate, int userId, int flightId, decimal price, OrderState orderState) : this()
+    public Order(int id, int paymentId, int customerId, int airlineId, int userId, int flightId, decimal price, OrderState orderState) : this()
     {
         Id = id;
+        PaymentId = paymentId;
         AirlineId = airlineId;
-        DepartureDate = departureDate;
-        ArrivalDate = arrivalDate;
         UserId = userId;
         CustomerId = customerId;
         Price = price;

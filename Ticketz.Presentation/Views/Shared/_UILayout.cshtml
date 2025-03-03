@@ -10,14 +10,21 @@
 
 	@await Html.PartialAsync("/Views/LayoutPartial/_NavbarPartial.cshtml")
 
+		<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+
 	@RenderBody()
-	@await RenderSectionAsync("Scripts", required: false)
 
 	<!-- start footer Area -->
 	@await Html.PartialAsync("/Views/LayoutPartial/_FooterPartial.cshtml")
 	<!-- End footer Area -->
 
 	@await Html.PartialAsync("/Views/LayoutPartial/_ScriptPartial.cshtml")	
+	@await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

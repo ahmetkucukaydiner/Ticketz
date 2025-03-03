@@ -20,6 +20,7 @@ public class BaseDbContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Flight> Flights { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     public BaseDbContext(DbContextOptions<BaseDbContext> dbContextOptions, IConfiguration configuration) : base(
        dbContextOptions)

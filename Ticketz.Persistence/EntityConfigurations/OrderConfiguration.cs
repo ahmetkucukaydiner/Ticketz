@@ -16,11 +16,10 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.ToTable("Orders").HasKey(a => a.Id);
 
         builder.Property(o => o.Id).HasColumnName("Id").IsRequired();
+        builder.Property(o => o.PaymentId).HasColumnName("PaymentId").IsRequired();
         builder.Property(o => o.AirlineId).HasColumnName("AirlineId").IsRequired();
         builder.Property(o => o.CustomerId).HasColumnName("CustomerId").IsRequired();
         builder.Property(o => o.FlightId).HasColumnName("FlightId").IsRequired();
-        builder.Property(o => o.DepartureDate).HasColumnName("DepartureDate").IsRequired();
-        builder.Property(o => o.ArrivalDate).HasColumnName("ArrivalDate").IsRequired();
         builder.Property(o => o.UserId).HasColumnName("UserId");
         builder.Property(o => o.OrderState).HasColumnName("OrderState").IsRequired();
         builder.Property(o => o.Price).HasColumnName("Price").IsRequired();
@@ -33,6 +32,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasOne(o => o.Airline);
         builder.HasOne(o => o.User);
         builder.HasOne(o => o.Customer);
+
+        builder.HasOne(o => o.Payment)
+               .WithOne(p => p.Order)
+               .HasForeignKey<Payment>(p => p.OrderId)  // Payment bağımlı taraf
+               .IsRequired();
 
         builder.HasQueryFilter(o => !o.DeletedDate.HasValue);
     }

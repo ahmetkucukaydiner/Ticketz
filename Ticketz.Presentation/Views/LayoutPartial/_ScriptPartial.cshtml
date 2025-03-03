@@ -48,5 +48,19 @@
                 }
             }
         });
-    });        
+    });    
+    
+    $('.airport-select').on('select2:select', function(e) {
+            debugger
+            var airportCode = e.params.data.airportCode;
+            if($(this).attr('name') === 'fromCode') {
+                  $('#departureAirportCode').val(airportCode);
+            } else {
+                $('#arrivalAirportCode').val(airportCode);
+            }
+        });
+
+            document.querySelector("input[type='date']").addEventListener("change", function() {
+        console.log("Seçilen tarih: ", this.value);
+    });
 </script>

@@ -9,6 +9,7 @@ using Ticketz.Application.Features.Orders.Commands.Update;
 using Ticketz.Application.Features.Orders.Queries.GetById;
 using Ticketz.Application.Features.Orders.Queries.GetList;
 using Ticketz.Application.Features.Orders.Queries.GetListByDynamic;
+using MediatR;
 
 namespace Ticketz.WebApi.Controllers;
 
@@ -16,6 +17,13 @@ namespace Ticketz.WebApi.Controllers;
 [ApiController]
 public class OrdersController : BaseController
 {
+    private readonly IMediator _mediator;
+
+    public OrdersController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [HttpGet("GetList")]
     public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
@@ -40,10 +48,10 @@ public class OrdersController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody] CreateOrderCommand createOrderCommand)
+    public async Task<IActionResult> Create([FromBody] CreateOrderCommand createOrderCommand)
     {
-        CreatedOrderResponse createOrderResponse = await Mediator.Send(createOrderCommand);
-        return Ok(createOrderResponse);
+        CreatedOrderResponse response = await _mediator.Send(createOrderCommand);
+        return Ok(response);
     }
 
     [HttpPut]

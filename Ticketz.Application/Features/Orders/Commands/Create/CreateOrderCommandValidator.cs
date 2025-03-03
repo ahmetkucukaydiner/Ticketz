@@ -13,7 +13,6 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
     {
         RuleFor(x => x.ArrivalAirportId).NotNull();
         RuleFor(x => x.DepartureAirportId).NotNull();
-        RuleFor(x => x.CustomerId).NotNull();
         RuleFor(x => x.Price).NotEmpty();
     }
 }

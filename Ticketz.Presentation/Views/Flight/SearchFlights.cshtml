@@ -5,13 +5,7 @@
     Layout = "~/Views/Shared/_UILayout.cshtml";
 }
 
-<!doctype html>
-<html lang="zxx">
-<body>
-    <br />
-    <br />
-    <br />
-    <br />
+
 <div class="container mt-4">
     <!-- Arama Filtreleri -->
     <div class="card mb-4">
@@ -19,14 +13,14 @@
             <div class="row">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <label><i class="bi bi-person"></i> Kalkış</label>
-                            <div class="form-control">@Model.SearchFlightCriteria.fromId</div>
+                            <label><i class="bi bi-person"></i>Kalkış</label>
+                            <div class="form-control">@Model.SearchFlightCriteria.departureAirportCode</div>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label><i class="bi bi-person"></i>Varış</label>
-                            <div class="form-control">@Model.SearchFlightCriteria.toId</div>
+                            <div class="form-control">@Model.SearchFlightCriteria.arrivalAirportCode</div>
                         </div>
                     </div>
                 <div class="col-md-2">
@@ -84,7 +78,7 @@
                         {
                             <div class="badge bg-success">-@flight.Price%</div>
                         } *@
-                        <div class="h4 mb-0">$@flight.Price</div>
+                        <div class="h4 mb-0">@flight.Price ₺</div>
                             <form action="/Flight/GetFlightResults" method="post">
                                 <input type="hidden" name="token" value="@flight.Token" />
                                 <input type="hidden" name="currency_code" value="TRY" />
@@ -96,5 +90,3 @@
         </div>
     }
 </div>
-</body>
-</html>
