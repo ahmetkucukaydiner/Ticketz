@@ -28,14 +28,7 @@ namespace Ticketz.Presentation.Controllers
 
 		[HttpPost]
 		public async Task<IActionResult> SearchFlights([FromForm] SearchFlightModel model)
-		{
-            //Console.WriteLine($"fromId: {model.fromId}, fromCode: {model.fromCode}, toId: {model.toId}, toCode: {model.toCode}");
-
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-            
+		{          
             var jsonQuery = JsonConvert.SerializeObject(new
 			{
 				searchFlightCriteria = new
@@ -133,22 +126,22 @@ namespace Ticketz.Presentation.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult CheckoutFlights(string token, decimal totalPrice, string airlineName, int flightNumber, string departureAirportName, string arrivalAirportName)
-        {
-            var viewModel = new FlightViewModel
-            {
-                GetFlightDetailsResponse = new GetFlightDetailsResponseModel
-                {
-                    Token = token,
-                    TotalPrice = totalPrice,
-                    AirlineName = airlineName,
-                    FlightNumber = flightNumber,
-                    DepartureAirportName = departureAirportName,
-                    ArrivalAirportName = arrivalAirportName
-                }
-            };
-            return View(viewModel);
-        }
+        //[HttpGet]
+        //public IActionResult CheckoutFlights(string token, decimal totalPrice, string airlineName, int flightNumber, string departureAirportName, string arrivalAirportName)
+        //{
+        //    var viewModel = new FlightViewModel
+        //    {
+        //        GetFlightDetailsResponse = new GetFlightDetailsResponseModel
+        //        {
+        //            Token = token,
+        //            TotalPrice = totalPrice,
+        //            AirlineName = airlineName,
+        //            FlightNumber = flightNumber,
+        //            DepartureAirportName = departureAirportName,
+        //            ArrivalAirportName = arrivalAirportName
+        //        }
+        //    };
+        //    return View(viewModel);
+        //}
     }
 }

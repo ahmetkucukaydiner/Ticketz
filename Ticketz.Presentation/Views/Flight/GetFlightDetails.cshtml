@@ -108,13 +108,22 @@
 
     <!-- Satın Alma Butonu -->
     <div class="text-center mt-4">
-        <form action="/Flight/CheckoutFlights" method="get">        
+        <form action="/Checkout/Index" method="get">
             <input type="hidden" name="token" value="@Model.Token" /> <!-- Token'ı gizli alan olarak ekleyin -->
+            <input type="hidden" name="adultPassengers" value="@Model.AdultPassengers" /> <!-- Yetişkin yolcu sayısını gizli alan olarak ekleyin -->
+            <input type="hidden" name="airlineId" value="@Model.AirlineId" /> <!-- Çocuk yolcu sayısını gizli alan olarak ekleyin -->
             <input type="hidden" name="totalPrice" value="@Model.TotalPrice" /> <!-- Toplam fiyatı gizli alan olarak ekleyin -->
             <input type="hidden" name="airlineName" value="@Model.AirlineName" /> <!-- Havayolu ismini gizli alan olarak ekleyin -->
             <input type="hidden" name="flightNumber" value="@Model.FlightNumber" /> <!-- Uçuş numarasını gizli alan olarak ekleyin -->
             <input type="hidden" name="departureAirportName" value="@Model.DepartureAirportName" /> <!-- Kalkış havaalanı ismini gizli alan olarak ekleyin -->
             <input type="hidden" name="arrivalAirportName" value="@Model.ArrivalAirportName" /> <!-- Varış havaalanı ismini gizli alan olarak ekleyin -->
+            <input type="hidden" name="departureTime" value="@Model.DepartureTime" /> <!-- Kalkış zamanını gizli alan olarak ekleyin -->
+            <input type="hidden" name="arrivalTime" value="@Model.ArrivalTime" /> <!-- Varış zamanını gizli alan olarak ekleyin -->
+            <input type="hidden" name="departureAirportId" value="@Model.DepartureAirportId" />
+            <input type="hidden" name="arrivalAirportId" value="@Model.ArrivalAirportId" />
+            <input type="hidden" name="brandedFareName" value="@Model.BrandedFareName" />
+            <input type="hidden" name="cabinClass" value="@Model.CabinClass" />
+            <input type="hidden" name="cabinLugggage" value="@Model.CabinLuggage" />
             <button type="submit" class="btn btn-primary btn-lg">Satın Al</button>
         </form>        
     </div>

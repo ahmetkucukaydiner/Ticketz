@@ -11,10 +11,7 @@ public class CreatedOrderResponse
 {
     public int Id { get; set; }
     public int CustomerId { get; set; }
-    public int AgencyId { get; set; }
     public int AirlineId { get; set; }
-    public int ArrivalAirportId { get; set; }
-    public int DepartureAirportId { get; set; }
     public int FlightId { get; set; }
     public decimal Price { get; set; }
     public OrderState OrderState { get; set; }

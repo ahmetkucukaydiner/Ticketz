@@ -32,8 +32,6 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
     public string CustomerEmail { get; set; }
     
     // Uçuş bilgileri
-    public int DepartureAirportId { get; set; }
-    public int ArrivalAirportId { get; set; }
     public int FlightNumber { get; set; }
     public DateTime DepartureTime { get; set; }
     public DateTime ArrivalTime { get; set; }
@@ -41,6 +39,8 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
     public string? CabinClass { get; set; }
     public string? BrandedFareName { get; set; }
     public string? Luggage { get; set; }
+    public int DepartureAirportId { get; set; }
+    public int ArrivalAirportId { get; set; }
     
     // Ödeme bilgileri
     public string CardNumber { get; set; }

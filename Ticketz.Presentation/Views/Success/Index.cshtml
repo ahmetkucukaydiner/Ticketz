@@ -1,0 +1,38 @@
+﻿@model CheckoutResponseModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<div class="container my-5">
+    <h2>Uçak Biletiniz Başarıyla Satın Alındı!</h2>
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">Tebrikler!</h4>
+        <p>Uçak biletiniz başarıyla satın alındı. Aşağıdaki bilgileri kontrol ediniz:</p>
+    </div>
+
+    <h5>Bilet Bilgileri:</h5>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Havayolu:</strong> @Model.AirlineName</li>
+        <li class="list-group-item"><strong>Uçuş Numarası:</strong> @Model.FlightNumber</li>
+        <li class="list-group-item"><strong>Kalkış Havaalanı:</strong> @Model.DepartureAirportName</li>
+        <li class="list-group-item"><strong>Varış Havaalanı:</strong> @Model.ArrivalAirportName</li>
+        <li class="list-group-item"><strong>Kalkış Zamanı:</strong> @Model.DepartureTime</li>
+        <li class="list-group-item"><strong>Varış Zamanı:</strong> @Model.ArrivalTime</li>
+        <li class="list-group-item"><strong>Toplam Fiyat:</strong> ₺@Model.Price</li>
+    </ul>
+
+    <h5>Müşteri Bilgileri:</h5>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Ad:</strong> @Model.CustomerFullName</li>
+        <li class="list-group-item"><strong>Pasaport Numarası:</strong> @Model.CustomerPassportNumber</li>
+        <li class="list-group-item"><strong>Telefon:</strong> @Model.CustomerPhoneNumber</li>
+        <li class="list-group-item"><strong>Email:</strong> @Model.CustomerEmail</li>
+    </ul>
+
+    <div class="text-center mt-4">
+        <a href="/Default/Index" class="btn btn-primary">Ana Sayfaya Dön</a>
+    </div>
+</div>
+

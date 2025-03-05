@@ -25,11 +25,11 @@
     <!-- Yolcu Bilgileri -->
     <h5 class="mb-3">Yolcu Bilgileri</h5>
     <div id="passenger-info">
-        @for (int i = 1; i < Model.GetFlightDetailsResponse.AdultPassengers + 1; i++)
+        @for (int i = 1; i < Model.GetFlightDetailsResponse.AdultPassengers; i++)
         {
             <div class="card mb-3">
                 <div class="card-body">
-                    <h6 class="card-title">Yolcu @i</h6>
+                    <h6 class="card-title">Yolcu @i sdadsadas$</h6>
                     <div class="mb-3">
                         <label for="passengerName_@i" class="form-label">Ad Soyad</label>
                         <input type="text" class="form-control" id="passengerName_@i" name="passengerName_@i" required>

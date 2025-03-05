@@ -1,0 +1,118 @@
+﻿@model CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+    int passenger = 0;
+}
+
+<div class="container my-5">
+    <h4 class="mb-4">Ödeme Bilgileri</h4>
+
+    <!-- Uçuş Bilgileri -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Uçuş Özeti</h5>
+        </div>
+        <div class="card-body">
+            <p ><strong>Havayolu:</strong> @Model.GetFlightDetailsResponse.AirlineName </p>
+            <p><strong>Uçuş Numarası:</strong> @Model.GetFlightDetailsResponse.FlightNumber</p>
+            <p><strong>Kalkış:</strong> @Model.GetFlightDetailsResponse.DepartureAirportName - @Model.GetFlightDetailsResponse.DepartureTime.ToString("dd MMMM yyyy, dddd")</p>
+            <p><strong>Varış:</strong> @Model.GetFlightDetailsResponse.ArrivalAirportName - @Model.GetFlightDetailsResponse.ArrivalTime.ToString("dd MMMM yyyy, dddd")</p>
+            <p><strong>Toplam Fiyat:</strong> @Model.GetFlightDetailsResponse.TotalPrice ₺</p>
+        </div>
+    </div>
+
+    <form action="/Checkout/CreateOrder" method="post">
+    <!-- Yolcu Bilgileri -->
+    <h5 class="mb-3">Yolcu Bilgileri</h5>
+    <div id="passenger-info">
+        @for (int i = 0; i < Model.GetFlightDetailsResponse.AdultPassengers; i++)
+        {
+                passenger++;
+            <div class="card mb-3">
+                <div class="card-body">
+                        <h6 class="card-title">Yolcu @passenger</h6>
+                    <div class="mb-3">
+                            <label for="customerFirstName" class="form-label">Ad</label>
+                            <input type="text" class="form-control" id="customerFirstName" name="customerFirstName" required>
+                    </div>
+                    <div class="mb-3">
+                            <label for="customerLastName" class="form-label">Soyad</label>
+                            <input type="text" class="form-control" id="customerLastName" name="customerLastName" required>
+                    </div>
+                    <div class="mb-3">
+                            <label for="customerPassportNumber" class="form-label">Pasaport Numarası</label>
+                            <input type="text" class="form-control" id="customerPassportNumber" name="customerPassportNumber" required>
+                    </div>
+                    <div class="mb-3">
+                            <label for="customerEmail" class="form-label">Mail Adresi</label>
+                            <input type="text" class="form-control" id="customerEmail" name="customerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                            <label for="customerPhoneNumber" class="form-label">Telefon Numarasi</label>
+                            <input type="number" class="form-control" id="customerPhoneNumber" name="customerPhoneNumber" required>
+                    </div>
+
+                    @* <div class="mb-3">
+                        <label for="birthDate_@i" class="form-label">Doğum Tarihi</label>
+                        <input type="date" class="form-control" id="birthDate_@i" name="birthDate_@i" required>
+                    </div> *@
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Ödeme Bilgileri -->
+    <h5 class="mb-3">Ödeme Bilgileri</h5>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="cardNumber" class="form-label">Kart Numarası</label>
+                <input type="text" class="form-control" id="cardNumber" name="CardNumber" min="15" max="16" required>
+            </div>
+            <div class="mb-3">
+                <label for="cardHolderName" class="form-label">Kart Sahibinin Adi Soyadi</label>
+                <input type="text" class="form-control" id="cardHolderName" name="cardHolderName" min="15" max="16" required>
+            </div>
+                <div class="mb-3">
+                    <label for="expirationDate" class="form-label">Son Kullanma Tarihi (MM/YY)</label>
+                    <input type="text" class="form-control" id="expirationDate" name="expirationDate" placeholder="MM/YY" required
+                           pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$"
+                           title="MM/YY formatında giriniz. Örnek: 12/25">
+                </div>
+                <div class="mb-3">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" id="cvv" name="cvv" min="001" max="999" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- Satın Alma Butonu -->
+    
+        <div class="text-center mt-4">
+            <input type="hidden" name="GetFlightDetailsResponse.FlightNumber" value="@Model.GetFlightDetailsResponse.FlightNumber" />
+            <input type="hidden" name="GetFlightDetailsResponse.TotalPrice" value="@Model.GetFlightDetailsResponse.TotalPrice" />
+            <input type="hidden" name="GetFlightDetailsResponse.AdultPassengers" value="@Model.GetFlightDetailsResponse.AdultPassengers" />
+            <input type="hidden" name="GetFlightDetailsResponse.DepartureTime" value="@Model.GetFlightDetailsResponse.DepartureTime" />
+            <input type="hidden" name="GetFlightDetailsResponse.ArrivalTime" value="@Model.GetFlightDetailsResponse.ArrivalTime" />
+            <input type="hidden" name="GetFlightDetailsResponse.DepartureAirportId" value="@Model.GetFlightDetailsResponse.DepartureAirportId" />
+            <input type="hidden" name="GetFlightDetailsResponse.ArrivalAirportId" value="@Model.GetFlightDetailsResponse.ArrivalAirportId" />
+            <input type="hidden" name="GetFlightDetailsResponse.AirlineId" value="@Model.GetFlightDetailsResponse.AirlineId" />
+            <input type="hidden" name="GetFlightDetailsResponse.CabinClass" value="@Model.GetFlightDetailsResponse.CabinClass" />
+            <input type="hidden" name="GetFlightDetailsResponse.BrandedFareName" value="@Model.GetFlightDetailsResponse.BrandedFareName" />
+            <input type="hidden" name="GetFlightDetailsResponse.CabinLuggage" value="@Model.GetFlightDetailsResponse.CabinLuggage" />
+            <button class="btn btn-primary btn-lg">Ödeme Yap ve Bileti Satın Al</button>
+        </div>
+    </form>
+</div>  
+
+<style>
+    .card {
+        border: 1px solid #dee2e6;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+</style>
