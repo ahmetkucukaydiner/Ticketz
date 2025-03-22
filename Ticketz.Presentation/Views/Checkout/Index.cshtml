@@ -9,7 +9,6 @@
 <div class="container my-5">
     <h4 class="mb-4">Ödeme Bilgileri</h4>
 
-    <!-- Uçuş Bilgileri -->
     <div class="card mb-4">
         <div class="card-header bg-light">
             <h5 class="mb-0">Uçuş Özeti</h5>
@@ -86,10 +85,7 @@
                 <input type="text" class="form-control" id="cvv" name="cvv" min="001" max="999" required>
             </div>
         </div>
-    </div>
-
-    <!-- Satın Alma Butonu -->
-    
+    </div>    
         <div class="text-center mt-4">
             <input type="hidden" name="GetFlightDetailsResponse.FlightNumber" value="@Model.GetFlightDetailsResponse.FlightNumber" />
             <input type="hidden" name="GetFlightDetailsResponse.TotalPrice" value="@Model.GetFlightDetailsResponse.TotalPrice" />

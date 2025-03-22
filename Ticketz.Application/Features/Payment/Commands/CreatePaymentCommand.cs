@@ -27,7 +27,6 @@ public class CreatePaymentCommand : IRequest<CreatedPaymentResponse>, ILoggableR
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IPaymentService _paymentService;
-        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
 
         public CreatePaymentCommandHandler(
@@ -42,7 +41,6 @@ public class CreatePaymentCommand : IRequest<CreatedPaymentResponse>, ILoggableR
 
         public async Task<CreatedPaymentResponse> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
-            // Ödeme işlemini gerçekleştir
             var paymentResult = await _paymentService.ProcessPayment(
                 request.CardNumber,
                 request.CardHolderName,
@@ -56,20 +54,18 @@ public class CreatePaymentCommand : IRequest<CreatedPaymentResponse>, ILoggableR
                 throw new Exception($"Ödeme işlemi başarısız: {paymentResult.ErrorMessage}");
             }
 
-            // Ödeme kaydını oluştur
             var payment = new Domain.Entities.Payment
             {
                 OrderId = request.OrderId,
-                CardNumber = MaskCardNumber(request.CardNumber), // Kart numarasını maskele
+                CardNumber = MaskCardNumber(request.CardNumber),
                 CardHolderName = request.CardHolderName,
                 ExpirationDate = request.ExpirationDate,
-                Cvv = "***", // CVV'yi kaydetme
+                Cvv = "***",
                 Price = request.Price
             };
 
             await _paymentRepository.AddAsync(payment);
 
-            // Response oluştur
             var response = _mapper.Map<CreatedPaymentResponse>(payment);
             response.PaymentId = paymentResult.PaymentId;
             response.PaymentDate = paymentResult.PaymentDate;
@@ -80,7 +76,6 @@ public class CreatePaymentCommand : IRequest<CreatedPaymentResponse>, ILoggableR
 
         private string MaskCardNumber(string cardNumber)
         {
-            // Kart numarasını maskele (sadece son 4 haneyi göster)
             if (string.IsNullOrEmpty(cardNumber))
                 return string.Empty;
 

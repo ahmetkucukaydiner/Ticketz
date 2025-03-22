@@ -19,7 +19,7 @@
 <script src="/travelista/js/jquery.nice-select.min.js"></script>
 <script src="/travelista/js/owl.carousel.min.js"></script>
 
-<!-- En son custom script'ler -->
+
 <script src="/travelista/js/main.js"></script>
 
 <!-- Select2 initialization -->
@@ -70,12 +70,11 @@
         var expirationDateInput = document.getElementById("ExpirationDate");
         var expirationDate = expirationDateInput.value;
 
-        // Regex ile kontrol
         var regex = /^(0[1-9]|1[0-2])\/?([0-9]{2})$/;
         if (!regex.test(expirationDate)) {
             alert("Lütfen geçerli bir tarih girin (MM/YY formatında).");
             expirationDateInput.focus();
-            event.preventDefault(); // Formun gönderilmesini engelle
+            event.preventDefault(); 
         }
     });
 </script>

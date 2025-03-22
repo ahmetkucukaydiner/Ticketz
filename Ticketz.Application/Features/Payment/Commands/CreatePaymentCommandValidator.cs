@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ticketz.Application.Features.Payment.Commands
 {
-    internal class CreatePaymentCommandValidator
+    public class CreatePaymentCommandValidator
     {
     }
 }

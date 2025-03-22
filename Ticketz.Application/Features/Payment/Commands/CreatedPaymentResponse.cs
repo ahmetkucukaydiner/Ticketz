@@ -10,13 +10,11 @@ public class CreatedPaymentResponse
 {
     public int Id { get; set; }
     public int OrderId { get; set; }
-    public string CardNumber { get; set; } // Maskelenmiş kart numarası
+    public string CardNumber { get; set; } 
     public string CardHolderName { get; set; }
     public string ExpirationDate { get; set; }
     public decimal Price { get; set; }
     public DateTime CreatedDate { get; set; }
-    
-    // Ödeme sağlayıcısından gelen bilgiler
     public string PaymentId { get; set; }
     public DateTime PaymentDate { get; set; }
     public bool IsSuccessful { get; set; }

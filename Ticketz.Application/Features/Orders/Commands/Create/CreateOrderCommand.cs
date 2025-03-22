@@ -19,19 +19,14 @@ namespace Ticketz.Application.Features.Orders.Commands.Create;
 
 public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableRequest, ICacheRemoverRequest, ITransactionalRequest
 {
-    // Sipariş bilgileri
     public int AirlineId { get; set; }
     public decimal Price { get; set; }
     public OrderState OrderState { get; set; } = OrderState.Sales;
-    
-    // Müşteri bilgileri
     public string CustomerFirstName { get; set; }
     public string CustomerLastName { get; set; }
     public string CustomerPassportNumber { get; set; }
     public string CustomerPhoneNumber { get; set; }
     public string CustomerEmail { get; set; }
-    
-    // Uçuş bilgileri
     public int FlightNumber { get; set; }
     public DateTime DepartureTime { get; set; }
     public DateTime ArrivalTime { get; set; }
@@ -41,8 +36,6 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
     public string? Luggage { get; set; }
     public int DepartureAirportId { get; set; }
     public int ArrivalAirportId { get; set; }
-    
-    // Ödeme bilgileri
     public string CardNumber { get; set; }
     public string CardHolderName { get; set; }
     public string ExpirationDate { get; set; }
@@ -82,7 +75,6 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
 
         public async Task<CreatedOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            // 1. Müşteri kaydını oluştur
             var customer = new Customer
             {
                 FirstName = request.CustomerFirstName,
@@ -94,7 +86,6 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
             
             await _customerRepository.AddAsync(customer);
             
-            // 2. Uçuş kaydını oluştur
             var flight = new Flight
             {
                 AirlineId = request.AirlineId,
@@ -112,7 +103,6 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
             
             await _flightRepository.AddAsync(flight);
             
-            // 3. Sipariş kaydını oluştur (PaymentId olmadan)
             var order = new Order
             {
                 CustomerId = customer.Id,
@@ -120,12 +110,11 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
                 FlightId = flight.Id,
                 Price = request.Price,
                 OrderState = request.OrderState,
-                PaymentId = 0 // Geçici değer, sonra güncellenecek
+                PaymentId = 0 
             };
             
             await _orderRepository.AddAsync(order);
             
-            // 4. Ödeme işlemini gerçekleştir
             var createPaymentCommand = new CreatePaymentCommand
             {
                 OrderId = order.Id,
@@ -140,43 +129,35 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ILoggableReque
             
             if (!paymentResponse.IsSuccessful)
             {
-                // Ödeme başarısız olursa, sipariş durumunu güncelle
                 await _orderRepository.UpdateAsync(order);
                 throw new Exception("Ödeme işlemi başarısız oldu.");
             }
             
-            // 5. Ödeme başarılı olursa, sipariş kaydını güncelle
             order.PaymentId = paymentResponse.Id;
             await _orderRepository.UpdateAsync(order);
 
-            // 6. Havayolu ve havalimanı bilgilerini getir
             var airline = await _airlineRepository.GetAsync(a => a.Id == request.AirlineId);
             var departureAirport = await _airportRepository.GetAsync(a => a.Id == request.DepartureAirportId);
             var arrivalAirport = await _airportRepository.GetAsync(a => a.Id == request.ArrivalAirportId);
 
-            // 7. Response oluştur
             CreatedOrderResponse response = _mapper.Map<CreatedOrderResponse>(order);
             
-            // Müşteri bilgilerini ekle
             response.CustomerFullName = $"{customer.FirstName} {customer.LastName}";
             response.CustomerEmail = customer.Email;
             response.CustomerPhoneNumber = customer.PhoneNumber;
             response.CustomerPassportNumber = customer.PassportNumber;
             
-            // Uçuş bilgilerini ekle
             response.FlightNumber = flight.FlightNumber;
             response.DepartureTime = flight.DepartureTime;
             response.ArrivalTime = flight.ArrivalTime;
             response.CabinClass = flight.CabinClass;
             response.Luggage = flight.Luggage;
             
-            // Havayolu ve havalimanı bilgilerini ekle
             if (airline != null)
             {
                 response.AirlineName = airline.Name;
             }           
                        
-            // Ödeme bilgilerini ekle
             response.PaymentId = paymentResponse.PaymentId;
             response.PaymentDate = paymentResponse.PaymentDate;
             response.IsPaymentSuccessful = paymentResponse.IsSuccessful;

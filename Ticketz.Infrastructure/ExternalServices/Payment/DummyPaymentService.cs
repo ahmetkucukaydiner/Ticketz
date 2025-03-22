@@ -12,10 +12,10 @@ public class DummyPaymentService : IPaymentService
     private readonly Random _random = new Random();
     private readonly List<string> _validCardNumbers = new List<string>
     {
-        "4111111111111111", // Visa
-        "5555555555554444", // MasterCard
-        "378282246310005",  // American Express
-        "6011111111111117"  // Discover
+        "4111111111111111", 
+        "5555555555554444", 
+        "378282246310005",  
+        "6011111111111117"  
     };
 
     public async Task<PaymentResult> ProcessPayment(
@@ -26,10 +26,8 @@ public class DummyPaymentService : IPaymentService
         decimal amount,
         CancellationToken cancellationToken)
     {
-        // Simüle edilmiş işlem gecikmesi
         await Task.Delay(1000, cancellationToken);
 
-        // Kart numarası kontrolü
         if (!IsValidCardNumber(cardNumber))
         {
             return new PaymentResult
@@ -40,7 +38,6 @@ public class DummyPaymentService : IPaymentService
             };
         }
 
-        // Son kullanma tarihi kontrolü
         if (!IsValidExpirationDate(expirationDate))
         {
             return new PaymentResult
@@ -51,7 +48,6 @@ public class DummyPaymentService : IPaymentService
             };
         }
 
-        // CVV kontrolü
         if (!IsValidCvv(cvv))
         {
             return new PaymentResult
@@ -62,7 +58,6 @@ public class DummyPaymentService : IPaymentService
             };
         }
 
-        // Kart sahibi adı kontrolü
         if (string.IsNullOrWhiteSpace(cardHolderName))
         {
             return new PaymentResult
@@ -73,7 +68,6 @@ public class DummyPaymentService : IPaymentService
             };
         }
 
-        // Tutar kontrolü
         if (amount <= 0)
         {
             return new PaymentResult
@@ -84,7 +78,6 @@ public class DummyPaymentService : IPaymentService
             };
         }
 
-        // Rastgele başarı/başarısızlık (başarı olasılığı %90)
         bool isSuccessful = _random.Next(100) < 90;
 
         if (!isSuccessful)
@@ -96,8 +89,7 @@ public class DummyPaymentService : IPaymentService
                 PaymentDate = DateTime.Now
             };
         }
-
-        // Başarılı ödeme
+       
         return new PaymentResult
         {
             IsSuccessful = true,
@@ -108,14 +100,12 @@ public class DummyPaymentService : IPaymentService
 
     private bool IsValidCardNumber(string cardNumber)
     {
-        // Basit doğrulama: Kart numarası test listesinde mi?
         return !string.IsNullOrWhiteSpace(cardNumber) &&
                _validCardNumbers.Contains(cardNumber.Replace(" ", "").Replace("-", ""));
     }
 
     private bool IsValidExpirationDate(string expirationDate)
     {
-        // Format kontrolü: MM/YY
         if (string.IsNullOrWhiteSpace(expirationDate) || !expirationDate.Contains('/'))
             return false;
 
@@ -126,15 +116,12 @@ public class DummyPaymentService : IPaymentService
         if (!int.TryParse(parts[0], out int month) || !int.TryParse(parts[1], out int year))
             return false;
 
-        // Ay kontrolü
         if (month < 1 || month > 12)
             return false;
 
-        // Yıl kontrolü (2 haneli)
         if (parts[1].Length != 2)
             return false;
 
-        // Şimdiki tarihle karşılaştırma
         int currentYear = DateTime.Now.Year % 100; // Son 2 hane
         int currentMonth = DateTime.Now.Month;
 
@@ -143,7 +130,6 @@ public class DummyPaymentService : IPaymentService
 
     private bool IsValidCvv(string cvv)
     {
-        // CVV 3 veya 4 haneli bir sayı olmalı
         return !string.IsNullOrWhiteSpace(cvv) &&
                (cvv.Length == 3 || cvv.Length == 4) &&
                cvv.All(char.IsDigit);
@@ -151,7 +137,6 @@ public class DummyPaymentService : IPaymentService
 
     private string GeneratePaymentId()
     {
-        // Benzersiz bir ödeme ID'si oluştur
         return $"PAY-{DateTime.Now:yyyyMMddHHmmss}-{_random.Next(1000, 9999)}";
     }
 }
